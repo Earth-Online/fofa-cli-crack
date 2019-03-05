@@ -1,0 +1,242 @@
+
+		<style type="text/css">
+			body {
+				font-size: 12px;
+				text-align: left;
+			}
+			
+			.InputText {
+				height: 48px;
+				width: 315px;
+				line-height: 48px;
+				vertical-align: middle;
+				background: #FAFBFD;
+				border: 1px solid #dfdfdf;
+				border-radius: 2px;
+			}
+			
+			.IinkBtn {
+				width: 78px;
+				height: 48px;
+				display: inline-block;
+				line-height: 48px;
+				text-align: center;
+				vertical-align: middle;
+				/*background: url('./images/btn.png') 0 -110px;*/
+				color: #666666;
+				border: 1px solid #e9e9e9;
+				text-decoration: none;
+				border-radius: 2px;
+			}
+			
+			.FileUploaderWrap {
+				position: relative;
+				width: 405px;
+				height: 27px;
+				margin-top: 20px;
+			}
+			
+			.FileUploaderWrapFake {
+				position: absolute;
+				top: 0;
+				left: 0;
+				z-index: 1;
+				height: 27px;
+			}
+			
+			.FileUploaderWrap .file-uploader {
+				position: relative;
+				width: 400px;
+				height: 27px;
+				text-align: right;
+				filter: alpha(opacity=0);
+				opacity: 0;
+				z-index: 2;
+				cursor: pointer;
+			}
+			/*.inputFileWrapper label {
+				display: block;
+				float: left;
+				position: relative;
+			}
+			
+			.inputFileWrapper input[type="file"] {
+				position: absolute;
+				width: 1px;
+				height: 1px;
+				clip: rect(0, 0, 0, 0);
+			}
+			
+			.inputFileWrapper .custorm-style {
+				display: block;
+				width: 390px;
+				height: 50px;
+			}
+			
+			.inputFileWrapper .custorm-style .left-button {
+				width: 80px;
+				line-height: 50px;
+				background: #008ac7;
+				color: #fff;
+				display: block;
+				text-align: center;
+				float: left;
+			}
+			
+			.inputFileWrapper .custorm-style .right-text {
+				width: 300px;
+				height: 40px;
+				line-height: 50px;
+				display: block;
+				float: right;
+				padding: 4px;
+				border: 1px solid #008ac7;
+				overflow: hidden;
+				-ms-text-overflow: ellipsis;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}*/
+			/*a {
+				display: inline-block;
+				width: 100px;
+				height: 40px;
+				background: red;
+				position: relative;
+				overflow: hidden;
+			}
+			
+			a:hover {
+				background: green;
+			}
+			
+			input {
+				position: absolute;
+				right: 0;
+				top: 0;
+				font-size: 100px;
+				opacity: 0;
+				filter: alpha(opacity=0);
+			}*/
+		</style>
+
+<div style="margin-top: 150px; margin-left: 40%">
+<div style="font-size:16px">通过ip文件生成报表</div>
+<div style="font-size:16px">格式：一行一个IP</div>
+			<div class="FileUploaderWrap">
+				<input type="file" class="file-uploader" name="uploadDataField" id="FileUploader" />
+				<div class="FileUploaderWrapFake">
+					<a href="javascript:void(0)" class="IinkBtn">选择文件</a>
+					<input type="text" id="PathDisplayer" class="InputText" disabled />
+				</div>
+			</div>
+			<div style="margin-top:30px">
+<a href="javascript:" id="mybtn" class="a_but1" style="padding: 5px 20px;font-size: 16px;">生成报表</a><span id="jindu" style="margin-left:10px; color:#F00"></span>
+</div>
+
+</div>
+
+<script type="text/javascript">
+var iplist = '';
+$(function(){
+   $('#mybtn').click(function(){
+	   $('#jindu').html('');
+   		var data = new FormData();  
+    	var files = $('#FileUploader')[0].files;
+		if(files[0] == null){
+			
+			$('#jindu').html('请选择IP列表文件!');
+			return;
+		}
+   		var filepath = files[0].path;
+   		var fs=require("fs");  
+		var data=fs.readFileSync(filepath,"utf-8");
+		//iplist = data.replace(/\n/g, "\\n");
+		iplist = data;
+		//console.log(data);
+		ReportFoFa();
+
+   });
+});
+function ReportFoFa() {
+	$('#jindu').html('生成中...<img style="width:30px" src="../images/loading2.gif">');
+	var UserInfo = GetUserInfo();
+	var Host = getFofaConfig('host');
+	$.ajax({
+		url: Host+'/api/v1/exploit/report?email='+UserInfo.email+'&key='+UserInfo.key,
+		type: 'post',
+		dataType: 'json',
+		data: iplist,
+		success: function(data) {
+			if(!data.error) {
+				report_id = data.id;
+				mytimer = setInterval("Get_FoFa_Report(" + report_id + ")", 1000);
+			}
+		},
+		error: function(xhr, type, exception) { //获取ajax的错误信息
+			$('#jindu').html('数据错误!');
+			
+		}
+
+	});
+}
+
+function Get_FoFa_Report(report_id) {
+	var UserInfo = GetUserInfo();
+	var Host = getFofaConfig('host');
+	$.ajax({
+		url: Host+'/api/v1/exploit/get_report?email='+UserInfo.email+'&key='+UserInfo.key+'&id='+report_id,
+		dataType: 'json',
+		type: 'get',
+		success: function(data) {
+			if(!data.error) {
+				if(data.state == 2) {
+					var FoFaurl = Host+'/'+data.url+'?email='+UserInfo.email+'&key='+UserInfo.key;
+					//window.open(FoFaurl, 'newwindow', 'height=100, width=400, top=0, left=0, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no');
+					const {shell} = require('electron'); 
+					shell.openExternal(FoFaurl);
+					clearInterval(mytimer);
+					$('#jindu').html('');
+				}
+			}
+		},
+		error: function(xhr, type, exception) { //获取ajax的错误信息
+			//alert(xhr.responseText, "Failed");
+			//$("#poc_tbody2").html('<tr><td style="text-align:center; color:#ff0000">服务器网络异常!</td></tr>');
+		}
+	});
+}
+</script>
+<script type="text/javascript">
+		//		window.onload = function() {
+		var fileUploader = document.getElementById('FileUploader');
+//		var fileUploader = document.getElementsByClassName('file-uploader');
+		var pathDisplayer = document.getElementById('PathDisplayer');
+//		var pathDisplayer = document.getElementsByClassName('InputText');
+		if (fileUploader.addEventListener) {
+			fileUploader.addEventListener('change', fileUploaderChangeHandler, false);
+		} else if (fileUploader.attachEvent) {
+			fileUploader.attachEvent('onclick', fileUploaderClickHandler);
+		} else {
+			fileUploader.onchange = fileUploaderChangeHandler;
+		}
+
+		function fileUploaderChangeHandler() {
+			pathDisplayer.value = fileUploader.value;
+		}
+
+		function fileUploaderClickHandler() {
+			setTimeout(function() {
+				fileUploaderChangeHandler();
+			}, 0);
+		}
+		fileUploader.onclick = function(){
+			console.log(1);
+		};
+		//			}
+		//		var fileBtn = $("input[type=file]");
+		//		fileBtn.on("change", function() {
+		//			var index = $(this).val().lastIndexOf("\\");
+		//			var sFileName = $(this).val().substr((index + 1));
+		//			$("#rightText").html(sFileName);
+		//		});
+</script>

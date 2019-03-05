@@ -1,0 +1,31 @@
+{
+  "name": "fofacli",
+  "version": "3.10.2",
+  "description": "fofacli",
+  "productName": "fofacli",
+  "author": "FOFA",
+  "license": "FOFA",
+  "main": "main.js",
+  "release": "1",
+  "scripts": {
+    "start": "electron main.js",
+    "package:win": "electron-packager  ./ fofacli --platform=win32 --arch=x64 --version=1.4.10 --out=./builds --icon=./images/48.ico --overwrite --ignore='^/builds$' --ignore=.git --ignore=fofalib --ignore=combmh --ignore=typings --ignore=nopackage --ignore=.DS_Store --asar=true --version-string.CompanyName=\"北京白帽汇科技有限公司\" --version-string.LegalCopyright=\"Copyright (C) 2016 北京白帽汇科技有限公司\" --version-string.FileDescription=fofacli --version-string.ProductName=fofacli --version-string.OriginalFilename=fofacli.exe",
+    "package:os": "electron-packager  ./ fofacli --platform=darwin --arch=x64 --electron-version=1.4.10 --out=./builds --icon=./images/128.icns --overwrite --ignore='^/builds$' --ignore=.git --ignore=fofalib --ignore=combmh --ignore=typings --ignore=nopackage --ignore=.DS_Store",
+    "package:linux": "electron-packager  ./ fofacli --platform=linux --arch=x64 --version=1.4.10 --out=./builds --icon=./images/128.icns --overwrite --ignore='^/builds$' --ignore=.git --ignore=fofalib --ignore=combmh --ignore=typings --ignore=nopackage --ignore=.DS_Store --asar=true"
+  },
+  "devDependencies": {
+  },
+  "dependencies": {
+    "iconv-lite": "^0.4.15",
+    "ipc": "^0.0.1",
+    "jquery": "^3.1.1",
+    "js-yaml": "^3.7.0",
+    "menu": "^0.2.5",
+    "menubar": "^5.1.0",
+    "minimist": "^1.2.0",
+    "node-schedule": "^1.2.0",
+    "os": "^0.1.1",
+    "xss": "^0.3.1",
+    "xssfilter": "^0.5.3"
+  }
+}

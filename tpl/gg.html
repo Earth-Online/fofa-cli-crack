@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+
+<body>
+
+
+
+
+<iframe  id="myiframe2" src="" width="100%"  scrolling="no" frameborder="0"></iframe>
+
+
+</body>
+</html>
+<script type="text/javascript">
+$(function(){
+	$("#myiframe2").css({height:$(document).height()-100});
+	$(window).resize(function () {
+		$("#myiframe2").css({height:$(document).height()-100});
+	});
+
+	var mall_url = getFofaConfig('host')+getFofaConfig('message_url');
+
+	var UserInfo = GetUserInfo();	
+
+	$("#myiframe2").attr({src:mall_url+'?email='+UserInfo.email+'&key='+UserInfo.key});
+	setTimeout(function() {
+		to_updateUserInfo_message();//更新消息
+	}, 500);
+});
+
+</script>

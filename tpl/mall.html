@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+
+<title>fofa pc端</title>
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid" style="">
+
+
+
+<iframe  id="myiframe" width="100%"  scrolling="no" frameborder="0"></iframe>
+
+
+
+</div>
+</body>
+</html>
+<script src="../js/jquery.min.js"></script>
+
+<script type="text/javascript">
+$(function(){
+$("#myiframe").css({height:$(document).height()-100});
+$(window).resize(function () {
+$("#myiframe").css({height:$(document).height()-100});
+
+});
+
+var mall_url = getFofaConfig('host')+getFofaConfig('mall_url');
+var UserInfo_mall = GetUserInfo();	
+/*	$.ajax( {
+        url: mall_url+'?email='+UserInfo.email+'&key='+UserInfo.key, 
+        type: "GET", 
+        success: function(data){
+        var result=$(data).get();
+		  $("html").html(result);
+			console.log(result);
+
+        }
+});*/
+//console.log(UserInfo_mall);
+if(typeof(UserInfo_mall)=="undefined"){ 
+	//window.location.reload();
+	to_routePage('mall.html');
+	return;
+}
+var packagejson = require('../package.json');
+var fofacliversion = packagejson.version;
+$("#myiframe").attr({src:mall_url+'?email='+UserInfo_mall.email+'&key='+UserInfo_mall.key+'&fofacliversion='+fofacliversion});
+
+});
+</script>

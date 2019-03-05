@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>FOFA Client</title>
+<link rel="stylesheet" media="all" href="../css/base.css" />
+<style>
+	html,body{overflow: hidden;}
+.mod_input {
+	width:80%;
+}
+.mod_input:focus {
+	width:80%;
+}
+.tipContent{
+	position: absolute;
+	top: 60px;
+	right: 12px;
+	cursor: pointer;
+	height: 35px; 
+	width: 35px; 
+	background:  url(../images/tip.png) no-repeat right center;
+	background-size: 42% 42%; 
+	display: inline-block;
+}
+.CoverTip{
+	display: none;
+	position: absolute;
+	right: 25px;
+	top: 0px;
+	margin: 0;
+	margin: auto;
+	color: #FFFFFF;
+	background: rgba(0,0,0,0.7);
+	border-radius: 5px;
+	padding: 3px 5px;
+	font-size: 12px;
+	width: 260px;
+}
+</style>
+<script>
+//window.moveTo(0, 0);//移动窗口   
+//window.resizeTo(550, 350); 
+window.onresize=new Function("window.resizeTo(550,   350);");
+var path = require('path');
+if (process.platform == 'darwin') {
+	var packagejson = require('../package.json');
+	var fofaclirelease = packagejson.release;
+	if(fofaclirelease == 0){
+		root_path_base = path.resolve('.');
+	}else{
+		root_path_base = path.dirname(path.dirname(path.dirname(path.dirname(path.dirname(__dirname)))));
+	}	
+}else{
+	root_path_base = path.resolve('.');
+}
+
+</script>
+</head>
+<body>
+<div style="width: 500px; height: 350px; margin-top: 20px; margin-left: 15px;">
+  <div class="row">
+    <!-- <div class="col-lg-7 hidden-xs"><img style="border-right:1px solid #e2e2e2; padding-right:30px;" src="../images/log_img.png" alt=""/></div> -->
+    <div class="col-lg-12">
+      <div class="mod_tab_t">用户登录</div>
+      <div class="mod_box">
+        <div class="dot2"></div>         
+          <table width="100%" border="0" cellspacing="0" cellpadding="0" class="mod_tab">
+            <tbody>
+              <tr>
+                <td style="height:50px;display: flex;vertical-align: text-bottom;line-height: 35px;"><span style="padding-right: 5px;">用户名/Email:</span><input type="text" name="email" id="email" autofocus class="mod_input dl_n input_i1" placeholder="请输入用户名或邮箱" />
+                </td>
+              </tr>
+              <tr>
+                <td style="height:50px;    height: 50px;display: flex;text-indent: 10px;line-height: 35px; text-align: left;"><span style="margin-left: 16px;padding-right: 5px;">API Key:</span><input type="text" name="key" id="key" class="mod_input dl_p input_i2" placeholder="请输入KEY" />
+                </td>
+				 <td><span class="tipContent"><div class="CoverTip">API Key是登录客户端和调用API时认证使用，登录FOFA网页后，点击右上角，访问“<a style="cursor:pointer" onClick="to_fofaUserCenter()" href="javascript:">个人中心</a>”即可获得。</div></span></td>
+              </tr>
+			  <tr>
+        <tr>
+                <td class="font12 jzmm" style="height:30px; vertical-align:middle;padding-left:20px;" valign="middle" >
+                    <img id="middle-img" style="width: 15px;background: gray;display:none;transform: translate(-50%,-50%);position: absolute;right: 11%;top: 62%;" src="../images/loading2.gif">
+                <input type="checkbox" id="fofarulesbox" style="vertical-align: text-bottom;padding-left: 12px;margin: 1px 7px 0;" checked="false" />I agree to the FOFA<a onclick="fofarules()" style="cursor: pointer;"> 《Terms of Service》</a>
+                
+                </td>
+              </tr>
+			  			   <tr>
+                <td style="height:20px;"><span style="color:#FF0000; margin-left:20px" id="error_info"></span></td>
+              </tr>
+              <tr>
+                <td style="height:50px;"><button name="button" type="submit" class="mod_but" onclick="to_login()" >登录</button></td>
+              </tr>
+
+              
+            </tbody>
+          </table>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
+<div id="fullbg_scan"></div>
+<div id="mydialog" style="display:none;color:#00f">数据加载中...</div>
+<style>
+#fullbg_scan {background-color: gray;left: 0;opacity: 0.5;position: absolute;top: 0;z-index: 3;filter: alpha(opacity=50);-moz-opacity: 0.5;-khtml-opacity: 0.5; width:100%;height:100%;display:none}
+#mydialog{left:228px;top:102px;height:50px;width:85px:color:#fff;position:absolute;z-index:999}
+</style>
+<script src="../js/jquery.min.js"></script>
+
+<script>
+var packagejson = require('../package.json');
+var fofaclirelease = packagejson.release;
+if(fofaclirelease == 0){
+	var jspathname = 'combmh';
+}else{
+	var jspathname = 'com';
+}
+document.write('<script src="../'+jspathname+'/u.js"></sc'+'ript>');
+</script>
+
+<script>
+$(function(){
+	//鼠标移上移出显示/隐藏
+	$(".tipContent").hover(function(){
+		$(".CoverTip").show()
+	},function(){
+		$(".CoverTip").hide()
+	});
+	
+	$(".CoverTip").hover(function(){},function(){
+		$(".CoverTip").hide()
+	});
+  //console.log(uinfo);
+  /*
+  if(uinfo.email.length > 0 && uinfo.key.length > 0){
+    window.location.href='index.html';
+  }*/
+
+  console.log(root_path_base);
+  if(CheckChinese(root_path_base)){
+		$('#fullbg_scan').css('display','block');
+		$('#mydialog').css('display','block');
+		$('#mydialog').css('left','160px');
+		$('#mydialog').html('目前不支持中文目录，请修改目录。');
+		return;
+  }
+  //if(1==1){
+  if(process.platform == 'darwin' && root_path_base.indexOf('/private/var/folders')!=-1){
+	 var os = require('os');
+	 var fs = require('fs');
+	 var rootpathtmp = os.homedir()+'/fofa_rootpath';
+   var footpathflag = 0;
+   if (fs.existsSync(rootpathtmp)) {
+         var rootpathtmpdata = fs.readFileSync(rootpathtmp, 'utf-8');
+         if(rootpathtmpdata.length > 0){
+			var packagejson = require('../package.json');
+			var fofacliversion = packagejson.version;
+            if(rootpathtmpdata.indexOf(fofacliversion)!=-1){
+				footpathflag = 1;
+			}
+         }
+   }
+	 if(footpathflag == 1){
+		 console.log('ddddddd');
+		 root_path_base = rootpathtmpdata;
+		 var uinfo = GetUserInfo();
+		 $('#email').val(uinfo.email);
+		 $('#key').val(uinfo.key);
+	 }else{
+		 console.log('fffffff');
+		 initRootPath_state = 0;
+		 initRootPath();
+		 initUserInfo();
+		 $('#fullbg_scan').css('display','block');
+		 $('#mydialog').css('display','block');
+	 }
+  }else{
+	 console.log('cccccccc');
+     var uinfo = GetUserInfo();
+	 $('#email').val(uinfo.email);
+	 $('#key').val(uinfo.key);
+  }
+});
+function initUserInfo(){
+  if(initRootPath_state == 0){
+	setTimeout("initUserInfo()",1000);
+	return;
+  }
+  var uinfo = GetUserInfo();
+  $('#email').val(uinfo.email);
+  $('#key').val(uinfo.key);
+}
+function initRootPath(){
+  var fs = require('fs');
+  var os = require('os');
+  var cmdStr = "find /Users -name fofascan.rb -print";
+  var child_process = require('child_process');
+  var last = child_process.exec(cmdStr);
+  //var last = child_process.spawn(spawn_cmd,[fofasan_file, "-m", filename, "-t", ip, 'f']);
+  jc_last = last;
+  jc_pid = last.pid;
+  var packagejson = require('../package.json');
+  var fofacliversion = packagejson.version;
+  var findstrbase = 'fofacli-darwin-x64-'+fofacliversion;
+  console.log(findstrbase);
+  last.stdout.on('data', function(data) {
+    if(data){
+      strs=data.split("\n"); //字符分割
+      for (i=0;i<strs.length ;i++ )
+      { 
+        //console.log(strs[i]);
+        if(strs[i].indexOf(findstrbase)!=-1&&strs[i].indexOf("/.Trash/")==-1){
+          //console.log('---');
+          //console.log(strs[i]);
+          //console.log('a='+path.dirname(path.dirname(path.dirname(strs[i]))));
+          var findpath = path.dirname(path.dirname(path.dirname(strs[i])));
+          console.log(findpath);
+          var fileAllPath = findpath+'/fofalib/fofascan/fofascan.rb';
+
+          if (fs.existsSync(fileAllPath)) {
+            fs.writeFileSync(os.homedir()+'/fofa_rootpath',findpath);
+			initRootPath_state = 1;
+			root_path_base = findpath;
+			$('#fullbg_scan').css('display','none');
+			$('#mydialog').css('display','none');
+            break;
+          }
+          process.kill(jc_pid);
+          //console.log('---');
+        }
+      }
+      //console.log('---'+data);
+    }
+    //console.log(data);
+  });
+
+}
+function to_login(){
+   
+  var email = $.trim($('#email').val());
+  var key = $.trim($('#key').val());
+  if(email.length < 1){
+    $('#error_info').html("邮箱不能为空");
+    $('#middle-img').hide();
+    return false;
+
+  }
+  if(key.length < 1){
+    $('#error_info').html("key不能为空");
+    return false; 
+  }
+   if (!$("#fofarulesbox").is(':checked')) {
+     $('#error_info').html("请同意FoFa协议");
+     $('#middle-img').hide();
+     return false;
+   }
+   $('#middle-img').show();
+  var login_url = getFofaConfig("host")+getFofaConfig("login_url");
+  var release = require('os').release();
+  var bmhsrc = process.platform+'-'+release;
+  var packagejson = require('../package.json');
+  var fofacliversion = packagejson.version;
+  $.ajax({    
+    url : login_url+'?email='+email+'&key='+key+'&bmhsrc='+bmhsrc+'&cliver='+fofacliversion,
+    dataType:  'json',
+	timeout : 30000,
+    success: function(data){
+      if(data.isvip){
+		 var newest_version = data.fofacli_ver;
+		 if(checkVerion(fofacliversion,newest_version) && data.forceupdate){
+		 	$('#error_info').html('为更好的用户体验，请下载最新版本!  <a style="cursor:pointer" onClick="to_downloadSoft()">下载</a>');
+			$('#middle-img').hide();
+			return;
+		 }
+		 if(data.close){
+		 	$('#error_info').html('客户端正在进行重大升级，请耐心等待通知。');
+			$('#middle-img').hide();
+			return;
+		 }
+		 if(data.fofa_server){
+			var fofa_server = 1;
+		 }else{
+			var fofa_server = 0;
+		 }
+		 if(null == data.username || "undefined" == typeof(data.username) || "" == data.username){
+			var uname = data.email;
+		 }else{
+		    var uname = data.username;
+		 }
+         var text = '{"email":"'+data.email+'","key":"'+key+'","fcoin":"'+data.fcoin+'","avatar":"'+data.avatar+'","message":"'+data.message+'","fofa_server":"'+fofa_server+'","vip_level":"'+data.vip_level+'","username":"'+uname+'"}';
+		if(process.platform == 'darwin'){
+		  var child_process = require('child_process');
+		  var which_ruby = child_process.execSync("/bin/bash -l -c 'source ~/.bash_profile;which ruby'");
+		  which_ruby = which_ruby.toString();
+		  which_ruby = which_ruby.replace(/\n/g, "");
+		  if(which_ruby.length > 0 && which_ruby.indexOf("/bin/ruby")!=-1){
+			var text = '{"email":"'+data.email+'","key":"'+key+'","fcoin":"'+data.fcoin+'","avatar":"'+data.avatar+'","message":"'+data.message+'","fofa_server":"'+fofa_server+'","vip_level":"'+data.vip_level+'","ruby_mac":"'+which_ruby+'","username":"'+uname+'"}';
+			console.log(text);
+			//console.log(process.env);
+		  }
+		}
+         multiUser(email);
+		 writeFofaConfig(JSON.parse(text));
+         window.location.href='index.html';
+         $('#middle-img').show();
+      }else{
+		$('#error_info').html("账号信息错误!");
+		$('#middle-img').hide();
+      }
+    },
+   error: function (xhr, type, exception) {//获取ajax的错误信息
+      //alert(JSON.parse(xhr.responseText).error);
+	  if(xhr.responseText == "" || xhr.status == 502 || xhr.status == 404 || xhr.status == 0 || xhr.status == 500){
+	    $('#error_info').html("网络问题，请再试!");
+	  }else{
+		var errmsg = JSON.parse(xhr.responseText).errmsg;
+		if(errmsg == "401 Unauthorized, make sure email and apikey is correct, and level is VIP."){
+			$('#error_info').html('账号信息错误或不是VIP账号!');
+		}else{
+			$('#error_info').html(JSON.parse(xhr.responseText).errmsg);
+		}
+	  }
+      $('#middle-img').hide();
+   }
+  });  
+}
+var ruleurl ="";
+  function fofarules(){
+    ruleurl  = "https://fofa.so/agreement";
+                     // $("#Reportloading").hide();
+                var BrowserWindow1 = require('electron').remote.BrowserWindow;
+                var win = new BrowserWindow1({ width: 800, height: 600,/*frame: false*/webPreferences:{nodeIntegration:false} });
+                win.on('closed', function() {
+                win = null;
+                });
+                    win.loadURL(ruleurl);
+                    win.show();
+  }
+function to_downloadSoft(){
+	const {shell} = require('electron'); 
+    shell.openExternal('https://fofa.so/about_client');
+}
+function CheckChinese(val){     
+　　var reg = new RegExp("[\\u4E00-\\u9FFF]+","g");
+　　if(reg.test(val)){
+		return true;
+   }else{
+		return false;   
+   }
+}
+function to_fofaUserCenter(){
+	const {shell} = require('electron'); 
+    shell.openExternal('https://fofa.so/my/users/info');
+}
+</script>

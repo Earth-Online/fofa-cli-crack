@@ -1,0 +1,2423 @@
+<link rel="stylesheet" media="screen" href="../css/bootstrap.css" />
+<link rel="stylesheet" media="screen" href="../css/font-awesome.css" />
+<link rel="stylesheet" media="screen" href="../css/animate.min.css" />
+<link rel="stylesheet" media="screen" href="../css/fofa_pc.css" />
+
+<script src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../js/tools.js"></script>
+<script type="text/javascript" src="../js/uutab_v1.js"></script>
+
+ <link rel="stylesheet" type="text/css" href="../js/autocomplete/jquery.autocomplete.css"></link>
+<script type="text/javascript" src="../js/autocomplete/jquery.autocomplete.js"></script>
+<!--引用的库-->
+
+<link href="../myjs/jquery-ui.css" type="text/css" rel="stylesheet">
+<script src="../myjs/jquery-ui.min.js" type="text/javascript"></script>
+<script src="../myjs/jquery.ui-contextmenu.min.js"></script>
+<link href="../myjs/ui.fancytree.css" rel="stylesheet" type="text/css">
+<script src="../myjs/jquery.fancytree-all.min.js" type="text/javascript"></script>
+<link href="../myjs/submit_poc.css" rel="stylesheet" type="text/css">
+<link href="../css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css">
+<script src="../js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+
+<!--begin 代码高亮-->
+<link rel="stylesheet" href="../js/CodeMirror/lib/codemirror.css">
+<script src="../js/CodeMirror/lib/codemirror.js"></script>
+<script src="../js/CodeMirror/addon/selection/active-line.js"></script>
+
+<link rel="stylesheet" href="../js/CodeMirror/theme/rubyblue.css">
+<script src="../js/CodeMirror/mode/ruby/ruby.js"></script>
+
+<link rel="stylesheet" type="text/css" href="../js/simditor-2.3.6/styles/simditor.css" />
+<script type="text/javascript" src="../js/simditor-2.3.6/scripts/module.js"></script>
+<script type="text/javascript" src="../js/simditor-2.3.6/scripts/hotkeys.js"></script>
+<script type="text/javascript" src="../js/simditor-2.3.6/scripts/uploader.js"></script>
+<script type="text/javascript" src="../js/simditor-2.3.6/scripts/simditor.js"></script>
+<script src="../myjs/recommandation.js" type="text/javascript"></script>
+
+<style type="text/css">
+.simditor{width:60%; float:left}
+.simditor p{size:16px}
+.simditor .simditor-toolbar > ul > li > .toolbar-item { font-size:14px}
+.simditor .simditor-body {min-height: 120px;}
+.simditor .simditor-body p{ margin:0px}
+p{font-size:16px; text-align:inherit}
+div.ac > ul > li.normal{ cursor:default}
+	.CodeMirror {
+		border: 1px solid black;
+		height: 100%;
+		/*min-height: 500px;*/
+		width: 100%;
+		overflow: hidden;
+	}
+	/* .CodeMirror-scroll { height: 800px; }*/
+.ui-menu .ui-menu-item {
+	padding-left:5px;
+}
+</style>
+<script>
+	var codeMirror_editor = '';
+	edit_success_flag = true;
+	to_initCodeMirror();
+	$(document).ready(function() {
+		//to_initCodeMirror();
+
+		$(".pc_nav a").click(function() {
+			if($(this).index() == 3) {
+
+				$(".pc_main").css({
+					"overflow": "hidden"
+				});
+
+				setTimeout(function() {
+					createFileData(1);
+
+					$(".CodeMirror").css({
+						height: $(document).height() - 230
+					});
+					$(".pc_main").css({
+						height: $(document).height() - 230
+					});
+
+				}, 300);
+			} else {
+				$(".pc_main").css({
+					"overflow-x": "hidden",
+					"overflow-y": "auto"
+				});
+			}
+		});
+	});
+</script>
+<!--end 代码高亮-->
+<script>
+	function createFileData(flag = 0) {
+		var IsHasExp = ischecked;
+		if(!IsHasExp){
+			var ExpParams = '[]';
+		}else{
+			var ExpParams = getExpJson();
+		}
+		if($('#is0day').is(':checked')) {
+			is0day = true;
+		}else{
+			is0day = false;
+		}
+		var tips_type = quoteValue($('#tips_type').val());
+		var tips_content = textNewLine(quoteValue($('#tips_content').val()));
+		var ldxx =
+			'{' + '"Name":"' + quoteValue($('#Name').val()) + '",' +
+			'"FileName":"' + quoteValue($('#FileName').val()) + '",' +
+			'"Description":"' + textNewLine(quoteValue($('#Description').val())) + '",' +
+			'"Product":"' + quoteValue($('#Product').val()) + '",' +
+			'"Homepage":"' + quoteValue($('#Homepage').val()) + '",' +
+			'"DisclosureDate":"' + quoteValue($('#DisclosureDate').val()) + '",'
+			// +'"Level":"'+$('#Level').val()+'",'
+			// +'"Effect":"'+$('#Effect').val()+'",'
+			+
+			'"Author":"' + quoteValue($('#Author').val()) + '",' +
+			'"FofaQuery":"' + quoteValue($('#FofaQuery').val()) + '",' +
+			'"Level":"' + quoteValue($('#Level').val()) + '",' +
+			'"Impact":"' + quoteValue($('#Impact').val()) + '",' +
+			'"Recommandation":"' + quoteValue($('#Recommandation').val()) + '",' +
+			'"References":' + (to_writeRefer(quoteValue($('#References').val()))) + ',' +
+			'"HasExp":'+IsHasExp + ',' +
+			'"ExpParams":'+ExpParams  + ',' +
+			'"is0day":'+is0day + ',' +
+			'"ExpTips":'+'{"type":"'+tips_type+'","content":"'+tips_content+'"}'  + 
+			'}';
+
+		$("#ldxx_data").val(ldxx);
+		rebuild_rule();
+		console.log($("#ldxx_data").val());
+		//begin add by ds
+		try {
+			var BaseInfo = JSON.parse($("#ldxx_data").val());
+		} catch (ex) {
+			//alert(ex.stack);
+			alert('json解析错误，请检查数据格式。');
+			/*var fs = require('fs');
+				fs.appendFile(root_path_base+"/fofalib/logs/fofacli.txt", "\r\n"+ex.stack, function (err) {
+			});*/
+		}
+		//console.log($("#fofacli_testrule").val());
+		try {
+			var ScanSteps = JSON.parse($("#fofacli_testrule").val());
+		} catch (ex) {
+			//alert(ex.stack);
+			alert('json解析错误，请检查数据格式。');
+			/*var fs = require('fs');
+				fs.appendFile(root_path_base+"/fofalib/logs/fofacli.txt", "\r\n"+ex.stack, function (err) {
+			});*/
+		}	
+		ScanSteps.unshift($("#poc_gx").val())
+		if(!ScanSteps[1]){
+			ScanSteps = [];
+		}
+		BaseInfo.ScanSteps = ScanSteps;
+
+		var Posttime = new Date().FormatData("yyyy-MM-dd HH:mm:ss");
+		BaseInfo.Posttime = Posttime;
+		//begin add version
+		var packagejson = require('../package.json');
+		var fofacliversion = packagejson.version;
+		BaseInfo.fofacli_version = fofacliversion;
+
+		var fofa_scan = getFofaConfig('fofa_scan');
+		var fofascan_filename = root_path_base + fofa_scan + '/HISTORY.txt';
+		var fs = require('fs');
+		var fofascan_history = fs.readFileSync(fofascan_filename, 'utf-8');
+		fofascan_history=fofascan_history.split("\n");
+		fofascan_version=fofascan_history[0].split(" ");
+		BaseInfo.fofascan_version = fofascan_version[0];
+
+		//end
+		BaseInfo.status = quoteValue($('#status').val());
+
+		if(flag == 1) {
+			var pocFileData = BaseInfo;
+			delete pocFileData.FileName;
+			//获取跟目录
+			var path = require('path');
+			var root_path = root_path_base;
+			var fs = require('fs');
+			var json_str_editor = JSON.stringify(pocFileData, null, 6);
+
+			var fofa_scan = getFofaConfig('fofa_scan');
+			var FileName = $('#FileName').val();
+			if(from == 'store') {
+				var filepath_name = root_path + fofa_scan + '/store_exploits/' + FileName;
+			} else {
+				var filepath_name = root_path + fofa_scan + '/exploits/' + FileName;
+			}
+			var data_temp = fs.readFileSync(filepath_name, 'utf-8');
+
+			var bool_tmp = data_temp.indexOf("get_info");
+			if(bool_tmp >= 0) {
+				var GetInfoEnd = data_temp.match(/def[\s]+get_info([\s\S.]*?)\}[\s]*end/);
+				var data_editor = data_temp.replace(GetInfoEnd[0], "def get_info\n\t" + json_str_editor + "\n\tend");
+				var data_editor = data_editor.replace('\"postdata\"', '\"data\"');
+			} else {
+				var GetInfoEnd = data_temp.match(/super[\s]*\(([\s\S.]*?)\)[\s]*end/);
+				var data_editor = data_temp.replace(GetInfoEnd[1], "\n\t" + json_str_editor + "\n\t");
+				var data_editor = data_editor.replace('\"postdata\"', '\"data\"');
+				//data_editor = data_temp;
+			}
+			//
+			if(codeMirror_editor) {
+				//codeMirror_editor.toTextArea();
+				//$('.CodeMirror').remove();
+				//codeMirror_editor = "";
+			}
+			$('#source_code').empty();
+			$('#source_code').text(data_editor);
+
+			//to_initCodeMirror();
+			//$('.CodeMirror').remove();
+			codeMirror_editor.setValue(data_editor);
+			//codeMirror_editor.getDoc().setValue(data_editor);
+			//codeMirror_editor.focus();
+			codeMirror_editor.refresh();
+			//to_initCodeMirror();
+			//CodeMirror.Doc(data_editor);
+		}
+		BaseInfo.FileName = $('#FileName').val();
+		return BaseInfo;
+	}
+	/*发布*/
+	function to_publish() {
+		createFileData(1);
+		$('#error_info_btn').html('');
+		var FileName = $('#FileName').val();
+		var UserInfo = GetUserInfo();
+		if(FileName.length < 1) {
+			$('#error_info_btn').html('请先保存!');
+			return;
+		}
+		var content_base = getPocJsonByRubyFileName(FileName);
+		var content = getPocFileContent(FileName);
+		if(content.length < 1) {
+			$('#error_info_btn').html('请先保存!');
+			return;
+		}
+		//begin 发布前检查fofaquery
+		var keyword = $('#FofaQuery').val();
+		var iconv = require("iconv-lite");
+		//keyword = iconv.encode(keyword, 'gbk').toString('binary');
+		//keyword = iconv.encode(keyword, 'utf-8');
+		var b = new Buffer(keyword);
+		var s = b.toString('base64');
+		s=encodeURIComponent(s);
+		var UserInfo = GetUserInfo();
+		var get_code_url = getFofaConfig('host') + getFofaConfig('fofa_search');
+		// $('#fofa_search_text').hide();
+		$("#fofaloading").show();
+		$('.but_fb').attr('disabled',true);
+		$('.but_fb').val('发布中...');
+		jssleep(2);
+		fofaqueryCheck = true;
+		$.ajax({
+			url: get_code_url + '?email=' + UserInfo.email + '&key=' + UserInfo.key + '&qbase64=' + s + "&fields=host,ip,port,title&limit=1",
+			dataType: 'json',
+			async: false,
+			type: 'get',
+			timeout : 30000,
+			success: function(data) {
+				if(!data.error) {
+					if(data.mode != 'extended'){
+						alert('fofa查询语句规则不对，请检查下再发布!');
+						fofaqueryCheck = false;
+						return false;
+					}
+				} else {
+					alert(data.errmsg);
+					fofaqueryCheck = false;
+				}
+			},
+			error: function(xhr, type, exception) { //获取ajax的错误信息
+			 if(xhr.responseText == "" || xhr.status == 502 || xhr.status == 404 || xhr.status == 0 || xhr.status == 500){
+				$('#error_info').html("网络问题，请再试!");
+			 }else{
+				if(type == 'error') {
+					alert(JSON.parse(xhr.responseText).errmsg);
+				}
+			 }
+				//alert(xhr.responseText, "Failed");
+				//$("#poc_tbody2").html('<tr><td style="text-align:center; color:#ff0000">服务器网络异常!</td></tr>');
+			}
+		});
+		if(!fofaqueryCheck){
+			$('.but_fb').attr('disabled',false);
+			$('.but_fb').val('发布');
+			return false;
+		}
+
+		//end 发布前检查fofaquery
+		var b64 = new Buffer(content);
+		var content_base64 = b64.toString('base64');
+		var codemd5 = mmd5('StFofart' + content_base64 + 'EPrond');
+		var server_url = getFofaConfig('host');
+
+		//var b64_impact = new Buffer(quoteValue($('#Impact').val()));
+		//var impact_b64 = b64_impact.toString('base64');
+
+		//var b64_recommandation = new Buffer(quoteValue($('#Recommandation').val()));
+		//var recommandation_b64 = b64_recommandation.toString('base64');
+		var packagejson = require('../package.json');
+		var fofacliversion = packagejson.version;
+		if($('#is0day').is(':checked')) {
+			is0day = true;
+		}else{
+			is0day = false;
+		}
+		$.ajax({
+			url: server_url + '/api/v1/exploit/publish?email=' + UserInfo.email + '&key=' + UserInfo.key + '&filename=' + FileName + '&codemd5=' + codemd5 + '&title=' + $('#Name').val() + '&product=' + $('#Product').val() + '&homepage=' + $('#Homepage').val()+'&level='+quoteValue($('#Level').val())+'&fofacliversion='+fofacliversion+'&is0day='+is0day,
+			dataType: 'multipart/form-data ',
+			type: 'POST',
+			data: content_base64,
+			success: function(data) {
+				//console.log(data);
+				$('.but_fb').attr('disabled',false);
+				$('.but_fb').val('发布');
+				if(!JSON.parse(data).error) {
+					$('#error_info_btn2').html('发布成功，请等待管理员审核!');
+					wrongmas();
+				} else {
+					$('#error_info_btn2').html('发布失败');
+					wrongmas();
+				}
+			},
+			error: function(xhr, type, exception) { //获取ajax的错误信息
+				$('.but_fb').attr('disabled',false);
+				$('.but_fb').val('发布');
+				if(!JSON.parse(xhr.responseText).error) {
+					$('#error_info_btn2').html('发布成功，请等待管理员审核!');
+					wrongmas();
+					content_base = JSON.parse(content_base);
+					content_base.FileName = FileName;
+					//console.log(content);
+					content_base.status = 1;
+					//writePoc(content, 1, 0);
+					writePocFileTimer(content_base);
+					loadAllPocBatch(1);
+				} else {
+						var errmsg = JSON.parse(xhr.responseText).errmsg;
+						if(errmsg == "the file already exists"){
+							$('#error_info_btn2').html('<span>发布失败,文件已经存在!</span>' + ' <div><input style="margin: 8px 0px;color:#666;border: 1px solid #ccc; padding:4px 4px;" id="input_rename"  /><a class="a_but1 pointer" id="a_rename">重命名</a></div>');
+						}else{
+							$('#error_info_btn2').html(errmsg);
+						}
+						wrongmas();
+				}
+
+			}
+		});
+	}
+
+	$(window).resize(function() {
+		$(".pc_main").css({
+			height: $(document).height() - 230
+		});
+		$(".CodeMirror").css({
+			height: $(document).height() - 230
+		});
+
+	});
+
+	$(function() {
+
+		//初始化宽高		
+
+		$(".pc_main").css({
+			height: $(document).height() - 230
+		});
+		$(".CodeMirror").css({
+			height: $(document).height() - 230
+		});
+		//添加删除项
+
+		$(".mod_all").on("click", ".add_li", function(event) {
+
+			//console.log(2222)
+			$(this).parent().parent().parent().after("<li>" + $(this).parent().parent().parent().html() + "</li>");
+			event.stopPropagation();
+			return false;
+		});
+
+		$(document).on("click", ".del_li", function() {
+
+			if($(this).parent().parent().parent().parent().find("li").length > 1) {
+				$(this).parent().parent().parent().remove();
+			}
+
+		});
+
+		/*插件引用*/
+
+		$(document).uutab({
+
+			u_title: '.pc_nav a', //导航dom组 
+			u_content: '.pc_main .qh_mod', //内容dom组  
+			u_act: 'act', //切换样式  
+			u_event: 'click' //事件  
+				//u_entrances:'animated uu_height'//内容进入特效   
+
+		});
+
+		var myDate = Date.parse(new Date());;
+
+		function getdate() {
+			var now = new Date(),
+				y = now.getFullYear(),
+				m = now.getMonth() + 1,
+				d = now.getDate();
+			return y + "-" + (m < 10 ? "0" + m : m) + "-" + (d < 10 ? "0" + d : d);
+		}
+		//$('#DisclosureDate').val(getdate(myDate));
+		$('#DisclosureDate').datetimepicker({
+			format: "yyyy-mm-dd",
+			minView: "month",
+			autoclose: true,
+			todayBtn: true
+		});
+
+	})
+</script>
+
+
+<script>
+	$(function() {
+
+		SOURCE = [{
+				title: "测试组",
+				folder: true,
+				expanded: true,
+				operation: 'AND',
+				children: [{
+					title: "测试项",
+					variable: '$code',
+					operation: '==',
+					val: '200'
+				}, {
+					title: "测试项",
+					variable: '$body',
+					operation: 'contains',
+					val: 'test'
+				}]
+			}],
+			CLIPBOARD = null;
+
+		n = window.n;
+		n=0;
+		/*添加菜单*/
+		$(".addtab").click(
+			function() {
+
+				var str_t = "<li><a href='#'> URL请求测试" + n + " </a><i class='fa fa-remove deltab' ></i></li>";
+				$(".nav_t").append(str_t);
+				n++;
+				var str_c = "<div class=mod style=display:none;>" + $("#mrsj_data").html() + "</div>";
+
+				var newstr_c = $(str_c).find(".table").attr('id', "tree" + n).parents(".mod");
+				$(".mod_all").append(newstr_c);
+				$(".nav_t li:last-child").addClass("act").siblings().removeClass();
+				$(".mod_all .mod").hide();
+				$(".mod_all .mod:last-child").show();
+
+				//$('.method_sel').selectpicker('refresh'); $('.method_sel').selectpicker('show');//更新下拉框插件
+
+				re_tabid("#tree" + n);
+
+				//rebuild_rule();
+
+			}
+
+		);
+
+		/*删除菜单*/
+		$(document).on("click", ".nav_t li .deltab", function() {
+
+			if($(".nav_t li").size() > 1) {
+				//console.log($(this).parent().index());
+
+				var thisnumber = $(this).parent().index();
+				$(".nav_t li").eq(thisnumber).remove();
+				$(".nav_t li:last-child").addClass("act").siblings().removeClass();
+				$(".mod_all .mod").eq(thisnumber).remove();
+				$(".mod_all .mod:last-child").show();
+				//rebuild_rule();
+
+			}
+
+			event.stopPropagation(); //阻且冒泡
+
+		});
+
+		/*插件引用*/
+
+		$(document).uutab({
+
+			u_title: '.q2 .nav_t li', //导航dom组 
+			u_content: '.q2 .mod_all .mod', //内容dom组  
+			u_act: 'act', //切换样式  
+			u_event: 'click' //事件  
+				//u_entrances:'animated uu_height'//内容进入特效   
+
+		});
+
+		/*保存*/
+		$('.but_bc').click(function(){
+			$('#error_info_btn').html('');
+			edit_success_flag = true;
+			if($('.pc_nav .act').index(".pc_nav a") == 0||$('.pc_nav .act').index(".pc_nav a") == 1||$('.pc_nav .act').index(".pc_nav a") == 2) {
+				if($('#Name').val() == "" || $('#Description').val() == "" || $('#Product').val() == "" || $('#Homepage').val() == "" || $('#DisclosureDate').val() == "" || $('#Author').val() == "" || $('#FofaQuery').val() == "" || $('#References').val() == ""|| $('#Impact').val() == ""|| $('#Recommandation').val() == "") {
+					$('#error_info_btn').html('请先填写漏洞基本信息');
+					return;
+				}
+			}
+			$('.but_bc').attr('disabled',true);
+			$('.but_bc').val('保存中...');
+			setTimeout(function(){
+				//$(".but_bc").on("click", function() {
+				if(ischecked){
+					if(getExpJson() ===  false){
+						$('.but_bc').attr('disabled',false);
+						$('.but_bc').val('保存');
+						return false;
+					}
+				}
+				if($('.pc_nav .act').index(".pc_nav a") == 3) {
+					var BaseInfo = createFileData();
+				} else {
+					var BaseInfo = createFileData(1);
+				}
+				$('#source_code').text(codeMirror_editor.getValue());
+				//console.log($('#source_code').text());
+				
+				if(from == 'store') {
+					writePoc(BaseInfo, 1, 1); //第一个参数1表示编辑不弹框;第二个参数1表示是购买的POC
+				} else {
+					writePoc(BaseInfo, 1, 0);
+				}
+				//begin 重新初始化基本信息
+				if($('.pc_nav .act').index(".pc_nav a") == 3) {
+					$(".nav_t li").remove();
+					$(".mod_all .mod").remove();
+					var FileName = temp_params2;
+					if(from == 'store') {
+						var pocJsonInfo = getPocJsonByRubyFileName(FileName, 1);
+					} else {
+						var pocJsonInfo = getPocJsonByRubyFileName(FileName);
+					}
+					pocJsonInfo = JSON.parse(pocJsonInfo);
+					pocJsonInfo.FileName = FileName;
+					console.log(pocJsonInfo);
+					//console.log(JSON.stringify(pocJsonInfo));
+					to_initEdit(pocJsonInfo); //编辑基本信息
+					to_initEditmain(pocJsonInfo); //编辑主体内容
+				}
+				//end 重新初始化基本信息
+				if(edit_success_flag){
+					$('#error_info_btn').html('保存成功!');
+				}
+				//begin 关闭页面提醒标识
+				have_save_flag = true;
+				if(typeof(have_save_timer)=="undefined"){
+				}else{
+					clearTimeout(have_save_timer);
+				}
+				have_save_timer = setTimeout(function(){
+					have_save_flag = false;
+				},1000*60*5); 
+				//end
+			},2);
+		});
+
+		/*编辑时，初始化值*/
+		var testUrl = document.location;
+		var URL = require('url');
+		var urlObj = URL.parse(testUrl.toString(), true);
+		//console.log(from);
+		window.json_str = '';
+		window.th = 0;
+		window.pindex = 0;
+		if(from != 'store') {
+			$('#fb_bt_temp').html('<input onclick="to_publish()" type="button" name="commit" value="发布" align="center" class="btn btn-primary btn-xl but_fb">');
+		}
+		if(temp_params1 == 'edit') {
+			//var Pid = urlObj.query.Pid;
+			var FileName = temp_params2;
+			if(from == 'store') {
+				var pocJsonInfo = getPocJsonByRubyFileName(FileName, 1);
+			} else {
+				var pocJsonInfo = getPocJsonByRubyFileName(FileName);
+			}
+			pocJsonInfo = JSON.parse(pocJsonInfo);
+			old_poc_content = pocJsonInfo;
+
+			pocJsonInfo.FileName = FileName;
+
+
+			//console.log(JSON.stringify(pocJsonInfo));
+			to_initEdit(pocJsonInfo); //编辑基本信息
+			to_initEditmain(pocJsonInfo); //编辑主体内容
+			to_initExp(pocJsonInfo); //初始化漏洞验证
+
+		} else {
+			var timestamp_poc = new Date().getTime();
+			var Pid = mmd5(timestamp_poc.toString());
+			SOURCE = [{
+					title: "测试组",
+					folder: true,
+					expanded: true,
+					operation: 'AND',
+					children: [{
+						title: "测试项",
+						variable: '$code',
+						operation: '==',
+						val: '200'
+					}, {
+						title: "测试项",
+						variable: '$body',
+						operation: 'contains',
+						val: 'test'
+					}]
+				}],
+				CLIPBOARD = null;
+		}
+
+	});
+	function to_initExp(item) {
+		if (typeof(item.HasExp) == "undefined") { 
+		    var IsHasExp = false;
+		}else{
+			var IsHasExp = item.HasExp;
+		}
+		if (typeof(item.ExpParams) == "undefined") { 
+		    var ExpParams = [];
+		}else{
+			var ExpParams = item.ExpParams;
+		}
+		
+		//对象转成json格式,判断复选框的状态
+		if(IsHasExp){
+			$("#isHasExp").attr("checked","true");
+			ischecked = true;
+		}else{
+			$("#isHasExp").removeAttr("checked","false");
+			ischecked = false
+		}
+		//console.log(item.ExpTips);
+		if (typeof(item.ExpTips) != "undefined") { 
+			$('#tips_type').val(item.ExpTips.type);
+			$('#tips_content').val(item.ExpTips.content);
+		}
+		//var strJson=JSON.stringify(ExpParams);
+//		alert(IsHasExp);
+//		alert(strJson);
+
+		//var Json =[{"name":"key1","type":"input","value":"value1"},{"name":"key2","type":"textarea","value":"value2"},{"name":"key3","type":"select","value":"value3"}];
+		$.each(ExpParams,function(i,v){
+			var type = v.type;
+			var value = v.value;
+			var name = v.name;
+			if (typeof(v.desc) == "undefined") { 
+				var desc = '';
+			}else{
+				var desc = v.desc;
+			}
+
+			
+			var $tr = $("<tr style='background: #fff;' class='fofaquerycheck_tr'></tr>");
+			var $td1 = $("<td style='background-color: #fff; width: 10%; vertical-align: middle'>参数</td>");
+			var $td2 = $("<td style='background-color: #fff;' class='inputCheck'></td>");
+			var $input1 = $("<input type='text' name='name' class='form-control' style='width: 16%; float: left' placeholder='name' value='"+ name+"'/>");
+			//判断表单类型
+			
+			if(type == "textarea"){
+				var $select = $("<select name='type' style='width: 11%; margin-right: 15px; margin-left: 15px; height: 33px; border: 1px solid #8a9eb2;' class='select'><option value=''>请选择类型</option><option value='input'>INPUT</option><option value='textarea' selected='selected'>TEXTAREA</option><option value='select'>SELECT</option></select>");
+			}else if(type == "select"){
+				var $select = $("<select name='type' style='width: 11%; margin-right: 15px; margin-left: 15px; height: 33px; border: 1px solid #8a9eb2;' class='select'><option value=''>请选择类型</option><option value='input'>INPUT</option><option value='textarea'>TEXTAREA</option><option value='select' selected='selected'>SELECT</option></select>");
+			}else{
+				var $select = $("<select name='type' style='width: 11%; margin-right: 15px; margin-left: 15px; height: 33px; display: inline-block;' class='select'><option value=''>请选择类型</option><option value='input' selected='selected'>INPUT</option><option value='textarea'>TEXTAREA</option><option value='select'>SELECT</option></select>");			
+			}
+			
+			var $input2 = $("<input type='text' value='"+value+"' name='value' class='form-control' style=' width:20%; display: inline-block;' placeholder='value'>");
+			var $input3 = $("<input type='text' value='"+desc+"' name='exp_desc' class='form-control' style=' width:20%; display: inline-block;margin-left: 10px;' placeholder='description'>");
+			var btn1 = $("<button onclick='addBtn()' type='button' class='fofaquerycheck_add_li btn btn-default addBtn' style='margin-left: 12px;'>+</button>");
+			var btn2 = $("<button type='button' class='fofaquerycheck_del_li btn btn-default reduceBtn' style='margin-left:13px;'>-</button>")
+			
+			
+			$tr.append($td1);
+			$tr.append($td2);
+			$td2.append($input1);
+			$td2.append($select);
+			$td2.append($input2);
+			$td2.append($input3);
+			$td2.append(btn1);
+			$td2.append(btn2);
+			$(".check").append($tr);
+		})
+	
+	}
+	
+	//将input的value值，转成json字符串
+	function getExpJson(){
+		var bigArr = [];
+		var return_flag = true;
+		$(".inputCheck").each(function(){
+			parArr = {};
+	        var name = quoteValue($(this).find("input[name=name]").val());
+			if(name.length < 1){
+				//alert('请输入POC验证参数名!');
+				//return_flag = false;
+				//return false;
+				//return true;
+			}
+
+	        var options = $(this).find("option:selected");
+	        var type = options.val();
+			if(type.length < 1){
+				if(name.length > 0){
+					alert('请选择POC验证参数类型!');
+					return_flag = false;
+					return false;
+				}
+			}
+	        
+	        var value = quoteValue($(this).find('input[name=value]').val());
+			if(value.length < 1){
+				if(name.length > 0){
+					alert('请输入POC验证参数值!');
+					return_flag = false;
+					return false;
+				}
+			}
+	       
+		   var exp_desc = quoteValue($(this).find('input[name=exp_desc]').val());
+
+		   if(name.length > 0 && type.length > 0 && value.length > 0){
+				parArr.name = name;
+				parArr.type = type;
+				parArr.value = value;
+	       }
+		   if(name.length > 0 && type.length > 0 && value.length > 0 && exp_desc.length > 0){
+				parArr.desc = exp_desc;
+	       }
+		   if(JSON.stringify(parArr) != "{}"){
+				var params = JSON.stringify(parArr);
+				params += ",";
+				bigArr += params;
+		   }
+		});
+		if(!return_flag){
+			return false;
+		}
+		if(bigArr.length > 0){
+			bigArr = "[" + bigArr.substring(0,bigArr.length-1) + "]";
+			return bigArr;
+		}else{
+			return '[]';
+		}
+		
+	}
+	//判断td和按钮是否显示
+	var fofacheck_html='<tr style="background-color:#fff;" class="fofaquerycheck_tr"><td width="10%" style="background-color:#fff;vertical-align: middle">参数</td><td style="background-color:#fff" class="inputCheck"><input type="text" class="form-control" name="name" style="width:16%;float: left;" placeholder="name"><select id="selected" name="type" style="margin-left: 15px;width: 11%;margin-right: 15px;height: 33px;display: inline-block;"><option value="">请选择类型</option><option value="input">INPUT</option><option value="textarea">TEXTAREA</option><option value="select">SELECT</option></select><input type="text" name="value" class="form-control " style="width: 20%;display: inline-block;" placeholder="value"><input type="text" name="exp_desc" class="form-control " style="width: 20%;display: inline-block;margin-left: 10px;" placeholder="description"><button type="button" onclick="addBtn()" class="fofaquerycheck_add_li btn btn-default addBtn" style="margin-left: 12px;">+</button><button type="button" class="fofaquerycheck_del_li btn btn-default reduceBtn" style="margin-left:12px;">-</button></td></tr>';
+	var ischecked = false;
+	$("#isHasExp").click(function(){
+		if($('#isHasExp').is(':checked')) {
+			if($(".fofaquerycheck_tr").length == 0){
+				$(".check").append(fofacheck_html);
+			}else{
+				$(".fofaquerycheck_tr").show();
+			}
+			ischecked = true;
+		}else{
+			//$(".fofaquerycheck_tr").remove();
+			$(".fofaquerycheck_tr").hide();
+			ischecked = false;
+		}
+	});
+	//点击加号，复制整条tr
+	function addBtn(){
+		$(".check").append(fofacheck_html);
+	}
+	//点击减号，删除整条tr
+	$(document).on("click",".reduceBtn",function(){
+		var leng = $(".check tr").length;
+		if(leng > 2){
+			$(this).parent().parent().remove();
+		}else{}
+	})
+	//change事件，当选择的是select时，input的文本框则提示 “多个参数以逗号分隔”
+	$(document).on("change","#selected",function(){
+		var selectedValue = $(this).find("option:selected").val();
+		if(selectedValue == "select"){
+			$(this).next().attr("placeholder","多个参数以逗号分隔")
+		}else{
+			$(this).next().attr("placeholder","value")
+		}
+	})
+	
+
+	var editor = new Simditor({
+	  textarea: $('#Recommandation'),
+	  toolbar: ['title', 'bold', 'italic', 'fontScale', 'color',  'blockquote', 'code',  'link', 'hr',  'indent', 'outdent', 'alignment']
+	  //optional options
+	});	
+	var editor1 = new Simditor({
+	  textarea: $('#Impact'),
+	  toolbar: ['title', 'bold', 'italic', 'fontScale', 'color',  'blockquote', 'code',  'link', 'hr',  'indent', 'outdent', 'alignment']
+	  //optional options
+	});	
+	
+	
+	function to_initEdit(item) {
+		//var item = getPocByPid(Pid);
+		$('#Name').val(translate_text(item.Name));
+		$('#FileName').val(translate_text(item.FileName));
+		$('#Description').val(translate_text(item.Description));
+		$('#Product').val(translate_text(item.Product));
+		$('#Homepage').val(translate_text(item.Homepage));
+		$('#DisclosureDate').val(translate_text(item.DisclosureDate));
+		//$('#Level').val(translate_text(item.Level));
+		// $('#Effect').val(item.Effect);
+		$('#Author').val(translate_text(item.Author));
+		$('#FofaQuery').val(translate_text(item.FofaQuery));
+		
+		$('#References').val(translate_text(to_parseRefer(item.References)));
+		$('#Level').val(translate_text(item.Level));
+		//$('#Impact').val(translate_text(item.Impact));
+		//$('#Recommandation').val(translate_text(item.Recommandation));
+		if (typeof(item.Impact) == "undefined") {
+			var edit_impact = '';
+		}else{
+			var edit_impact = translate_text(item.Impact);
+		}
+		if (typeof(item.Recommandation) == "undefined") {
+			var edit_recommandation = '';
+		}else{
+			var edit_recommandation = translate_text(item.Recommandation);
+		}
+		editor1.setValue(edit_impact);
+		editor.setValue(edit_recommandation);
+		$('#status').val(translate_text(item.status));
+
+		if (typeof(item.is0day) == "undefined") { 
+		    var is0day = false;
+		}else{
+			var is0day = item.is0day;
+		}
+		if(is0day){
+			$("#is0day").attr("checked","true");
+		}else{
+			$("#is0day").removeAttr("checked","false");
+		}
+		//console.log(item.FofaQuery);
+
+	}
+</script>
+
+<script type="text/javascript">
+	/*    var SOURCE = [
+				                {title: "测试组", folder: true, expanded: true, operation:'AND', children: [
+				                    {title: "测试项", variable:'$code', operation:'==', val:'200'},
+				                    {title: "测试项", variable:'$body', operation:'contains', val:'test'}
+				                ]}
+				            ],
+				            CLIPBOARD = null;*/
+
+	$(function() {
+
+		//re_tabid("#tree");//默认加载第一个模块
+
+	});
+
+	//重绘表格	
+	//编辑表格
+</script>
+
+<script type="text/javascript">
+ //智能提示+智能转规则
+ $(function(){	
+		var UserInfo = GetUserInfo();
+		//begin fofa server
+		if(!UserInfo.fofa_server){
+			return;
+		}
+		//end 
+		var server_url = getFofaConfig('host');
+		//$('#FofaQuery').val("a");
+		var productname = $('#Product').val();
+        $("#Product").autocomplete({  
+            source:function(request,response){  
+                $.ajax({
+                    type:"get",  
+                    url:getFofaConfig('host') + '/api/v1/exploit/rule_list?email=' + UserInfo.email + '&key=' + UserInfo.key + '&product=' + $('#Product').val(), 
+                    dataType : "json",
+                    cache : false,  
+                    async : false,    
+				    success: function( ret ) {  
+						 var data = ret.data;
+						 response( $.map( data, function( item ) {  
+							   return {  
+								 label: item,
+								 value: item  
+							   }  
+						 }));  
+				    }  
+                });  
+            },  
+            delay: 10,
+			select : function(event, ui) {
+				//alert(ui.item.value);
+                //$("#statId").val(ui.item.value);
+				$('#FofaQuery').val('app="'+ui.item.value+'"');
+				$.ajax({
+					url: getFofaConfig('host') + '/api/v1/exploit/rule_info?email=' + UserInfo.email + '&key=' + UserInfo.key + '&product=' + ui.item.value,
+					type: 'get',
+					dataType: 'json',
+					success: function(data) {
+						if(!data.error){
+							$('#Homepage').val(data.url);
+						}
+					}
+				
+				});
+            } 
+        });		
+});
+</script>
+<div class="container-fluid">
+
+	<div class="pc_nav">
+		<a class="act">漏洞信息</a>
+		<a>测试</a>
+        <a>验证</a>
+		<a>编辑器</a>
+		<div style="display: inline-block; float: right;">
+			<input id="ip_input" value="" style="margin-right: 10px; margin-top: 20px;display:inline-block" class="form-control"><button id="scan_ip" type="button" class="btn btn-primary">单ip扫描</button>
+		</div>
+	</div>
+
+	<div class="pc_main wd_mian">
+
+		<div class="qh_mod">
+			<form id="jsForm" name="jsForm" action="js/test.json" method="post"  onSubmit="return false">
+				<input type="hidden" id="status">
+				<div class="row">
+					<div class="col-xs-1">
+						<!-- <div class="wd_lert">描述<br>
+信息</div> -->
+					</div>
+					<div class="col-xs-11">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-striped">
+							<tbody>
+								<tr>
+									<td width="10%">文件名</td>
+									<td><input disabled id="FileName" name="FileName" value="" type="text" class="form-control " style=" width:60%;" required data-msg-required="请输入文件名" data-msg-minlength=""><span style="cursor:pointer" class="glyphicon glyphicon-folder-open"></span></td>
+								</tr>
+								<tr>
+									<td width="10%">标题</td>
+									<td><input id="Name" value="" name="aName" type="text" class="form-control " style=" width:60%;" required data-msg-required="请输入标题" minlength="6" data-msg-minlength="至少输入6个字符"></td>
+								</tr>
+								<tr>
+									<td>描述</td>
+									<!-- <td><input id="Description" name="Description" value="" type="text" class="form-control " style=" width:60%;" required data-msg-required="请输入描述"></td> -->
+									<td><textarea id="Description" name="Description" type="text" class="form-control" cols="10" rows="5" style=" width:60%;" required data-msg-required="请输入描述"></textarea></td>
+								</tr>
+								<tr>
+									<td>产品</td>
+									<td><input id="Product" name="Product" value="" type="text" class="form-control " style=" width:60%;" required data-msg-required="请输入产品"></td>
+								</tr>
+								<tr>
+									<td>产品主页</td>
+									<td><input id="Homepage" name="Homepage" value="" type="text" class="form-control " style=" width:60%;" required data-msg-required="请输入产品主页"></td>
+								</tr>
+								<tr>
+									<td>发现日期</td>
+									<td><input id="DisclosureDate" name="DisclosureDate" value="" type="text" class="form-control " style=" width:60%;" required data-msg-required="请输入发现日期"></td>
+								</tr>
+
+							</tbody>
+						</table>
+
+					</div>
+
+				</div>
+
+				<div class="row">
+					<div class="col-xs-1">
+						<!--     <div class="wd_lert">危害<br>
+信息</div> -->
+					</div>
+					<div class="col-xs-11">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-striped">
+							<tbody>
+								<!--<tr>
+      <td width="10%">等级</td>
+      <td><select style="width: 200px; border-radius: 2px; border: 1px solid #8a9eb2;    padding: 5px 6px;" name="Level" id="Level"><option value="1">低危</option><option value="2">中危</option><option value="3">高危</option></select></td>
+    </tr>-->
+								<!--     <tr>
+      <td width="10%">影响</td> 
+      <td><input id="Effect" value="" type="text" class="form-control " style=" width:60%;" ></td>
+    </tr> -->
+								<tr>
+									<td width="10%">作者</td>
+									<td><input id="Author" value="" type="text" class="form-control " style=" width:60%;"></td>
+								</tr>
+
+							</tbody>
+						</table>
+
+					</div>
+
+				</div>
+				<div class="row">
+					<div class="col-xs-1">
+						<!-- <div class="wd_lert">来源<br>
+信息</div> -->
+					</div>
+					<div class="col-xs-11">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-striped">
+							<tbody>
+								<tr>
+									<td width="10%">来源</td>
+									<!-- <td><input id="References" type="text" class="form-control " style=" width:60%;" ></td> -->
+									<td><textarea name="References" id="References" cols="10" rows="5" class="form-control " style=" width:60%;" required data-msg-required="请输入来源"></textarea></td>
+								</tr>
+
+							</tbody>
+						</table>
+
+					</div>
+
+				</div>
+				<div class="row">
+					<div class="col-xs-1">
+						<!-- <div class="wd_lert">Fofa查询规则</div> -->
+					</div>
+					<div class="col-xs-11">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-striped">
+							<tbody>
+								<!--  <tr>
+      <td width="10%">Fofa</td>
+      <td><input id="FofaQuery" type="text" class="form-control " style=" width:60%;" ><input class="btn" id="btnal" type="button" value="查询" /></td>
+    </tr> -->
+								<tr>
+									<td width="10%">Fofa查询规则</td>
+									<td><input id="FofaQuery" name="FofaQuery" type="text" class="form-control " style=" width:60%;"><input class="btn" id="btnal" type="button" value="查询" /></td>
+								</tr>
+
+							</tbody>
+						</table>
+
+					</div>
+
+				</div>
+                            <div class="row">
+				<div class="col-xs-1">
+
+				</div>
+				<div class="col-xs-11">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-striped">
+						<tbody>
+							<tr>
+								<td width="10%">等级</td>
+							  <td><select name="Level" id="Level" style="width:100px; padding:5px 6px">
+                                <option value="3">严重</option>
+                                <option value="2">高危</option>
+                                <option value="1">中危</option>
+                                <option value="0">低危</option>
+                                </select>
+							    </td>
+							</tr>
+
+						</tbody>
+					</table>
+
+				</div>
+
+			</div>
+            <div class="row">
+				<div class="col-xs-1">
+
+				</div>
+				<div class="col-xs-11">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-striped">
+						<tbody>
+							<tr>
+								<td width="10%">是否0DAY</td>
+							  <td>
+<input type="checkbox" id="is0day" style="width:16px; height:16px; cursor: pointer;">
+							    </td>
+							</tr>
+
+						</tbody>
+					</table>
+
+				</div>
+
+			</div>
+            <div class="row">
+				<div class="col-xs-1">
+					
+				</div>
+				<div class="col-xs-11">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-striped">
+						<tbody>
+							<tr>
+								<td width="10%">危害</td>
+								<td><textarea class="form-control xheditor {tools:'Bold,Italic,FontSize,Underline,Strikethrough,Blocktag,Align,Link,Unlink,Source,Fullscreen',skin:'default'}" name="Impact" id="Impact" cols="10" rows="5"  style=" width:60%;" required data-msg-required="请输入危害"></textarea>
+								
+							    <div>
+								<span style="margin-left:15px; margin-bottom:5px">选择漏洞危害、修复建议模板</span><br>
+								<select name="ldwhtpl" id="ldwhtpl" style="padding:5px 6px; margin-left:15px; width:150px">
+                                
+                                <option value="">请选择</option>
+                               
+                                </select>
+								</div>
+								</td>
+							</tr>
+
+						</tbody>
+					</table>
+
+				</div>
+
+			</div>
+            <div class="row">
+				<div class="col-xs-1">
+
+				</div>
+				<div class="col-xs-11">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-striped">
+						<tbody>
+							<tr>
+								<td width="10%">修复建议</td>
+								<td><textarea class="form-control xheditor {tools:'Bold,Italic,FontSize,Underline,Strikethrough,Blocktag,Align,Link,Unlink,Source,Fullscreen',skin:'default'}" name="Recommandation" id="Recommandation" cols="10" rows="5"  style=" width:60%;" required data-msg-required="请输入修复建议"></textarea></td>
+							</tr>
+
+						</tbody>
+					</table>
+
+				</div>
+
+			</div>
+			</form>
+		</div>
+		<div class="qh_mod" style="display:none;">
+
+			<div class="q2">
+
+				<div class="nav_box">
+					<ul class="nav_t">
+
+					</ul>
+					<a class="addtab">+
+
+					</a>
+					<div style=" position: relative; display: inline-block;">
+						<select class="method_sel1" id="poc_gx" style="position: absolute;top:-30px; width: 80px; margin-left: 8px;">
+							<option value="AND">AND</option>
+							<option value="OR">OR</option>
+
+						</select>
+
+					</div>
+				</div>
+
+				<div class="mod_box">
+					<div class="mod_all">
+
+					</div>
+					<div class="">
+
+						<form class="form-horizontal" id="new_fofacli" action="/" accept-charset="UTF-8" data-remote="true" method="post">
+							<input name="utf8" type="hidden" value="✓">
+							<!--
+          <div class="form-group">
+            <label for="vulfile" class="col-lg-3 control-label">漏洞名称</label>
+
+            <div class="col-lg-9">
+              <input autofocus="autofocus" class="form-control" placeholder="漏洞名称" type="text" name="fofacli[vulfile]" id="fofacli_vulfile" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="fofaquery" class="col-lg-3 control-label">FOFA查询语句</label>
+
+            <div class="col-lg-9">
+              <textarea class="form-control" style="height:100px" placeholder="fofa查询语句" name="fofacli[fofaquery]" id="fofacli_fofaquery">
+</textarea>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="testrule" class="col-lg-2 control-label">测试规则</label>
+
+            <div class="col-lg-10">-->
+							<textarea class="form-control" style="height:150px" placeholder="测试规则" hidden="hidden" name="fofacli[testrule]" id="fofacli_testrule">
+
+</textarea>
+
+							<textarea class="form-control" style="height:150px" placeholder="漏洞信息" hidden="hidden" id="ldxx_data">
+
+</textarea>
+
+							<div class="form-control" style="height:150px" placeholder="默认数据" hidden="hidden" id="mrsj_data">
+								<section class="panel">
+									<div class="panel-body form-horizontal">
+										<div id="myTabContent2" class="tab-content">
+											<div class="tab-pane active" id="home">
+
+												<div class="bjq_title">
+													<div class="bjq_title_txt"><i class="fa fa-minus-square-o"></i><span>Request</span></div>
+
+												</div>
+												<div class="bjq_content">
+													<div class="form-group">
+														<label for="url" class="col-lg-2 control-label">HTTP请求方法</label>
+														<div class="col-lg-10 form-inline">
+															<select class="method_sel" onchange="change_method(this)">
+																<option value="GET">GET</option>
+																<option value="POST">POST</option>
+																<option value="PUT">PUT</option>
+																<option value="HEAD">HEAD</option>
+																<option value="PUSH">PUSH</option>
+																<option value="DELETE">DELETE</option>
+																<option value="OPTION">OPTION</option>
+																<option value="user_define">自定义</option>
+															</select>
+															<input checked="checked" type="checkbox" class="follow_redirect" style="width:16px; height:16px; cursor: pointer;margin-left:10px" />支持跳转
+															<input type="text" class="form-control method" value="GET" name="method" style="display: none;">
+														</div>
+													</div>
+
+													<div class="form-group">
+														<label for="url" class="col-lg-2 control-label">测试URI</label>
+														<div class="col-lg-10">
+															<input style="width:60%" type="text" class="form-control url" value="/test.php">
+														</div>
+													</div>
+
+													<div class="form-group">
+														<label for="classheader" class="col-lg-2 control-label">Header</label>
+														<div class="col-lg-10">
+															<textarea name="" id="header" cols="10" rows="5" class="form-control classheader" value="header" style=" width:60%;"></textarea>
+															<!--   <input type="text" class="form-control classheader" style=" width:60%;" value="header"  onChange="rebuild_rule()">-->
+														</div>
+													</div>
+
+													<div class="form-group">
+														<label for="postdata" class="col-lg-2 control-label">Post data</label>
+														<div class="col-lg-10">
+															<!--     <input type="text" class="form-control postdata" style=" width:60%;" value="postdata"  onChange="rebuild_rule()">-->
+															<textarea class="form-control postdata" style=" width:60%;float:left" value="postdata" cols="10" rows="5"></textarea>
+															<select class="data_type_select" style="margin-left: 6px;padding:5px 6px;width:90px" onchange="to_updatePostDatatype(this)">
+																<option value="text">text</option>
+																<option value="hexstring">hexstring</option>
+																<option value="base64">base64</option>
+															</select>
+															<span style="display:none" class="dataType_span">
+															<a href="javascript:" class="postDataType_a" style="margin-left: 5px;color: #0689ff;" onclick="to_addPostDatatype(this)">添加</a><br>
+															<textarea class="postDataType_textarea" style="margin-left: 6px;margin-top: 8px;">ddsfd</textarea>
+															</span>
+														</div>
+													</div>
+												</div>
+
+												<div class="bjq_title">
+													<div class="bjq_title_txt"><i class="fa fa-minus-square-o"></i><span>Response Test
+</span></div>
+
+												</div>
+												<div class="bjq_content">
+
+													<table class="table table-hover table-bordered fancytree-colorize-selected fancytree-container fancytree-ext-table ui-draggable-handle fancytree-ext-gridnav" tabindex="-1">
+														<colgroup>
+															<col width="200px">
+															<col width="100px">
+															<col width="100px">
+															<col width="300px">
+															<col width="">
+														</colgroup>
+														<thead>
+															<tr>
+																<th width="22%" class="text-center">测试项</th>
+																<th width="18%">变量</th>
+																<th width="18%">操作</th>
+																<th width="18%">值</th>
+																<th width="18%">备注</th>
+															</tr>
+														</thead>
+														<tbody>
+															<tr class="fancytree-active fancytree-expanded fancytree-folder fancytree-has-children fancytree-lastsib fancytree-exp-el fancytree-ico-ef">
+																<td><span class="fancytree-node" style=""><span class="fancytree-expander"></span><span class="fancytree-icon"></span><span class="fancytree-title" tabindex="0">测试组</span></span>
+																</td>
+																<td></td>
+																<td>
+
+																	<select class="selectpicker" data-style="btn-default" data-width="auto" type="operation" style="display: none;">
+																		<option value="AND">同时存在</option>
+																		<option value="OR">存在一项</option>
+																	</select>
+																	<div class="btn-group bootstrap-select" style="width: 99px;"><button type="button" class="btn dropdown-toggle selectpicker btn-default" data-toggle="dropdown" title="同时存在"><span class="filter-option pull-left">同时存在</span>&nbsp;<span class="caret"></span></button>
+
+																		<div class="dropdown-menu open" style="min-width: 0px;">
+																			<ul class="dropdown-menu inner selectpicker" role="menu">
+																				<li rel="0" class="selected">
+																					<a tabindex="0" class="" style=""><span class="text">同时存在</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																				<li rel="1">
+																					<a tabindex="0" class="" style=""><span class="text">存在一项</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																			</ul>
+																		</div>
+																	</div>
+																</td>
+																<td></td>
+																<td></td>
+															</tr>
+															<tr class="fancytree-exp-n fancytree-ico-c">
+																<td><span class="fancytree-node" style="padding-left: 20px;"><span class="fancytree-expander"></span><span class="fancytree-icon"></span><span class="fancytree-title" tabindex="0">测试项</span></span>
+																</td>
+																<td>
+																	<select class="selectpicker" data-style="btn-default" data-width="auto" type="variable" style="display: none;">
+																		<option value="$code">HTTP响应码</option>
+																		<option value="$head">HTTP头</option>
+																		<option value="$body">HTTP正文</option>
+																	</select>
+																	<div class="btn-group bootstrap-select" style="width: 121px;"><button type="button" class="btn dropdown-toggle selectpicker btn-default" data-toggle="dropdown" title="HTTP响应码"><span class="filter-option pull-left">HTTP响应码</span>&nbsp;<span class="caret"></span></button>
+																		<div class="dropdown-menu open" style="min-width: 0px;">
+																			<ul class="dropdown-menu inner selectpicker" role="menu">
+																				<li rel="0" class="selected">
+																					<a tabindex="0" class="" style=""><span class="text">HTTP响应码</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																				<li rel="1">
+																					<a tabindex="0" class="" style=""><span class="text">HTTP头</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																				<li rel="2">
+																					<a tabindex="0" class="" style=""><span class="text">HTTP正文</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																			</ul>
+																		</div>
+																	</div>
+																</td>
+																<td>
+																	<select class="selectpicker" data-style="btn-default" data-width="auto" type="operation" style="display: none;">
+																		<option value="contains">包含</option>
+																		<option value="not contains">不包含</option>
+																		<option value="regex">正则表达式</option>
+																		<option value="start_with">开头</option>
+																		<option value="end_with">结尾</option>
+																		<option value="==">等于</option>
+																		<option value="!=">不等于</option>
+																		<option value=">">大于</option>
+																		<option value="<">小于</option>
+																		<option value=">=">大于等于</option>
+																		<option value="<=">小于等于</option>
+																	</select>
+																	<div class="btn-group bootstrap-select" style="width: 107px;"><button type="button" class="btn dropdown-toggle selectpicker btn-default" data-toggle="dropdown" title="等于"><span class="filter-option pull-left">等于</span>&nbsp;<span class="caret"></span></button>
+																		<div class="dropdown-menu open" style="min-width: 0px;">
+																			<ul class="dropdown-menu inner selectpicker" role="menu">
+																				<li rel="0">
+																					<a tabindex="0" class="" style=""><span class="text">包含</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																				<li rel="1">
+																					<a tabindex="0" class="" style=""><span class="text">正则表达式</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																				<li rel="2">
+																					<a tabindex="0" class="" style=""><span class="text">开头</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																				<li rel="3">
+																					<a tabindex="0" class="" style=""><span class="text">结尾</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																				<li rel="4" class="selected">
+																					<a tabindex="0" class="" style=""><span class="text">等于</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																				<li rel="5">
+																					<a tabindex="0" class="" style=""><span class="text">不等于</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																				<li rel="6">
+																					<a tabindex="0" class="" style=""><span class="text">大于</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																				<li rel="7">
+																					<a tabindex="0" class="" style=""><span class="text">小于</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																				<li rel="8">
+																					<a tabindex="0" class="" style=""><span class="text">大于等于</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																				<li rel="9">
+																					<a tabindex="0" class="" style=""><span class="text">小于等于</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																			</ul>
+																		</div>
+																	</div>
+																</td>
+																<td><input type="text" class="form-control" value="200"></td>
+																<td><input type="text" class="form-control"></td>
+															</tr>
+															<tr class="fancytree-lastsib fancytree-exp-nl fancytree-ico-c">
+																<td><span class="fancytree-node" style="padding-left: 20px;"><span class="fancytree-expander"></span><span class="fancytree-icon"></span><span class="fancytree-title" tabindex="0">测试项</span></span>
+																</td>
+																<td>
+																	<select class="selectpicker" data-style="btn-default" data-width="auto" type="variable" style="display: none;">
+																		<option value="$code">HTTP响应码</option>
+																		<option value="$head">HTTP头</option>
+																		<option value="$body">HTTP正文</option>
+																	</select>
+																	<div class="btn-group bootstrap-select" style="width: 114px;"><button type="button" class="btn dropdown-toggle selectpicker btn-default" data-toggle="dropdown" title="HTTP正文"><span class="filter-option pull-left">HTTP正文</span>&nbsp;<span class="caret"></span></button>
+																		<div class="dropdown-menu open" style="min-width: 0px;">
+																			<ul class="dropdown-menu inner selectpicker" role="menu">
+																				<li rel="0">
+																					<a tabindex="0" class="" style=""><span class="text">HTTP响应码</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																				<li rel="1">
+																					<a tabindex="0" class="" style=""><span class="text">HTTP头</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																				<li rel="2" class="selected">
+																					<a tabindex="0" class="" style=""><span class="text">HTTP正文</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																			</ul>
+																		</div>
+																	</div>
+																</td>
+																<td>
+																	<select class="selectpicker" data-style="btn-default" data-width="auto" type="operation" style="display: none;">
+																		<option value="contains">包含</option>
+																		<option value="not contains">不包含</option>
+																		<option value="regex">正则表达式</option>
+																		<option value="start_with">开头</option>
+																		<option value="end_with">结尾</option>
+																		<option value="==">等于</option>
+																		<option value="!=">不等于</option>
+																		<option value=">">大于</option>
+																		<option value="<">小于</option>
+																		<option value=">=">大于等于</option>
+																		<option value="<=">小于等于</option>
+																	</select>
+																	<div class="btn-group bootstrap-select" style="width: 107px;"><button type="button" class="btn dropdown-toggle selectpicker btn-default" data-toggle="dropdown" title="包含"><span class="filter-option pull-left">包含</span>&nbsp;<span class="caret"></span></button>
+																		<div class="dropdown-menu open" style="min-width: 0px;">
+																			<ul class="dropdown-menu inner selectpicker" role="menu">
+																				<li rel="0" class="selected">
+																					<a tabindex="0" class="" style=""><span class="text">包含</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																				<li rel="1">
+																					<a tabindex="0" class="" style=""><span class="text">正则表达式</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																				<li rel="2">
+																					<a tabindex="0" class="" style=""><span class="text">开头</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																				<li rel="3">
+																					<a tabindex="0" class="" style=""><span class="text">结尾</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																				<li rel="4">
+																					<a tabindex="0" class="" style=""><span class="text">等于</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																				<li rel="5">
+																					<a tabindex="0" class="" style=""><span class="text">不等于</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																				<li rel="6">
+																					<a tabindex="0" class="" style=""><span class="text">大于</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																				<li rel="7">
+																					<a tabindex="0" class="" style=""><span class="text">小于</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																				<li rel="8">
+																					<a tabindex="0" class="" style=""><span class="text">大于等于</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																				<li rel="9">
+																					<a tabindex="0" class="" style=""><span class="text">小于等于</span><i class="glyphicon glyphicon-ok icon-ok check-mark"></i></a>
+																				</li>
+																			</ul>
+																		</div>
+																	</div>
+																</td>
+																<td><input type="text" class="form-control" value="test"></td>
+																<td><input type="text" class="form-control"></td>
+															</tr>
+														</tbody>
+													</table>
+
+												</div>
+
+												<div class="bjq_title">
+													<div class="bjq_title_txt"><i class="fa fa-minus-square-o"></i><span>Custom Variables
+</span></div>
+
+												</div>
+												<div class="bjq_content">
+													<div class="form-group ">
+														<label for="postdata" class="col-lg-2 control-label">Custom Variables</label>
+														<div class="col-lg-10">
+															<ul class="Custom_li">
+																<li>
+																	<div class="row">
+																		<div class="col-lg-2"><input type="text" class="form-control Custom_name" style=" width:100%; display:inline-block" value=""></div>
+																		<div class="col-lg-2"> <input type="text" class="form-control Custom_vaule" style=" width:100%;display:inline-block" value="" id="Custom_vaule"></div>
+																		<div class="col-lg-2">
+																			<select class="Custom__sel1" style="padding: 7px 6px; width:100%;  position:relative;  display:inline-block">
+																				<option value="lastbody">lastbody</option>
+																				<option value="lastheader">lastheader</option>
+																				<option value="statusline">statusline</option>
+																			</select>
+																		</div>
+																		<div class="col-lg-2">
+																			<select class="Custom__sel2 " style="    padding: 7px 6px; width:100%; display:inline-block">
+																				<option value="regex">regex</option>
+																				<option value="sub">sub</option>
+																			</select>
+																		</div>
+																		<div class="col-lg-4"> <button type="button" class="add_li btn btn-default">+</button>
+																			<button type="button" class="del_li btn btn-default" style="margin-left:20px;">-</button> </div>
+																	</div>
+																</li>
+
+															</ul>
+
+														</div>
+													</div>
+
+												</div>
+
+											</div>
+										</div>
+									</div>
+								</section>
+
+							</div>
+
+							<!-- </div>
+          </div>-->
+
+						</form>
+
+					</div>
+
+				</div>
+
+			</div>
+
+			<script>
+				function change_method(my) //改值时更新
+				{
+
+					//console.log($("select.method_sel").length);
+					//console.log($(my));
+
+					if('user_define' == $(my).val()) //默认时
+					{
+						$(my).siblings("input.method").show();
+					} else {
+						$(my).siblings("input.method").hide();
+						$(my).siblings("input.method").val($(my).val());
+						// rebuild_rule();
+					}
+
+				}
+			</script>
+
+		</div>
+        <div class="qh_mod" style=" display: none;">
+<div class="row">
+				<div class="col-xs-1">
+
+				</div>
+				<div class="col-xs-11">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-striped">
+						<tbody class="check">
+							<tr>
+								<td width="10%" style="vertical-align: middle">漏洞验证</td>
+								<td><input type="checkbox" id="isHasExp" style="width:16px; height:16px" /><span style="margin-left: 10px;font-size: 12px;color: #ccc;">(验证参数包括：参数名称、参数类型、参数值，如参数名="cmd",参数类型="input",参数值="ping")</span></td>
+							</tr>
+                         	
+                         	
+                             
+						</tbody>
+						<tr>
+						<td width="10%" style="vertical-align: middle;padding-top:15px">提示信息</td>
+						<td><select style="height:30px;vertical-align: top;margin-right: 10px;" id="tips_type"><option value="Tips">Tips</option><option value="Warning">Warning</option></select><textarea id="tips_content" style="width:250px; height:30px;"></textarea></td>
+						</tr>
+					</table>
+
+				</div>
+
+			</div>
+
+	</div>
+
+		<div class="qh_mod" style=" margin:-30px; display: none;">
+
+			<textarea id="source_code" name="source_code" style="display: none;"></textarea>
+
+		</div>
+	</div>
+
+	<div class="pc_bottom ">
+
+		<div class="form-group">
+			<div class="col-sx-5 text-left f_l  mar_t20 mar_l15">
+				<input type="button" name="commit" value="返回列表" onclick="to_routePage('poc.html')" align="center" class="btn btn-primary btn-xl">
+
+			</div>
+
+			<div class="col-sx-5 text-right f_r mar_t20 ">
+				<span id="error_info_btn" style="color: #ff0000"></span>
+				<input type="button" name="commit" id="btbc" value="保存" align="center" class="btn btn-primary btn-xl but_bc">
+				<span id="fb_bt_temp"></span>
+
+				<input type="button" name="commit" value="扫描测试" align="center" class="btn btn-primary btn-xl but_scan">
+			</div>
+		</div>
+	</div>
+
+</div>
+<!--start 扫描弹框-->
+<style>
+	#graphbox {
+		border: 0px solid #e7e7e7;
+		background-color: #f2f4f7;
+		border-radius: 30px;
+		margin: 5px 0;
+	}
+	
+	.graph {
+		height: 33px;
+		position: relative;
+		font-size: 13px;
+		font-weight: 700;
+	}
+	
+	.graph .green {
+		position: relative;
+		overflow: hidden;
+		white-space: nowrap;
+		text-align: left;
+		color: #ffffff;
+		background-color: #3e5772;
+		margin: 8px 0px;
+		height: 35px;
+		font-family: Arial;
+		border-radius: 30px;
+		text-indent: 8px;
+		padding: 8px 0px 8px 0px;
+		display: block;
+	}
+	
+	.markbug {
+		color: rebeccapurple;
+		background: antiquewhite;
+		color: red;
+		text-align: center;
+		font-size: 12px;
+	}
+	
+	.btn-primary.disabled,
+	.btn-primary[disabled],
+	fieldset[disabled] .btn-primary,
+	.btn-primary.disabled:hover,
+	.btn-primary[disabled]:hover,
+	fieldset[disabled] .btn-primary:hover,
+	.btn-primary.disabled:focus,
+	.btn-primary[disabled]:focus,
+	fieldset[disabled] .btn-primary:focus,
+	.btn-primary.disabled:active,
+	.btn-primary[disabled]:active,
+	fieldset[disabled] .btn-primary:active,
+	.btn-primary.disabled.active,
+	.btn-primary[disabled].active,
+	fieldset[disabled] .btn-primary.active {
+		background-color: #8a9eb2;
+		border-color: #8a9eb2;
+	}
+	
+	.tabletitle {
+		margin: 0px 0px;
+		margin-top: 0px;
+	}
+	
+	#san_result1 {
+		color: #f60;
+		font-size: 16px;
+	}
+	
+	#san_result td,#san_result_have td,#san_result_no td {
+		padding: 5px 0px 5px 0px;
+		/*white-space: nowrap;overflow: hidden;text-overflow: ellipsis; border: 1px solid #8a9eb2; background-color: #f2f4f7; border-radius: 8px;*/
+	}
+	
+	.btn-primary1 {
+		color: #ffffff;
+		background-color: #3e5772;
+		border-color: #3e5772;
+		border-radius: 25px;
+		font-size: 14px;
+		margin-right: 20px;
+	}
+	
+	#dialog_scan .btn:hover,
+	#dialog_scan .btn:focus,
+	#dialog_scan .btn.focus {
+		color: #fff;
+		text-decoration: none;
+	}
+</style>
+
+<div id="fullbg_scan"></div>
+<div id="dialog_scan" style="height: 600px;">
+	<p class="close">X</p>
+	<div class="scan_input">
+		Data Amount
+		<select id="scan_free">
+			<option value="100">免费(100条)</option>
+			<option value="10000">1F币(10000条)</option>
+			<option value="">相应F币(任意条)</option>
+		</select>
+
+	</div>
+	<div class="scan_but">
+		<input type="button" name="button" value="开始扫描" align="center" class="btn btn-primary1 btn-xl start_scan">
+		<input disabled="true" type="button" name="commit" value="停止扫描" align="center" class="btn btn-primary1 btn-xl stop_scan">
+		<input disabled="true" type="button" name="commit" value="导出结果" align="center" class="btn btn-primary1 btn-xl export_scan">
+		<input disabled="true" type="button" name="commit" value="导出报表" align="center" class="btn btn-primary1 btn-xl Report_scan">
+		<div style="text-align: center;">漏洞个数：<span class="bugnum" style="margin-right: 50px;">0</span>扫描总数：<span class="bugallnum" style="margin-right: 50px;">0</span>Fofa查询总数：<span class="fofaqueryallnum">0</span></div>
+	</div>
+	<div id="graphbox" style="margin-top: 10px;margin-left: 15px; margin-right: 15px;">
+		<div class="graph"><span class="green" style="width: 0%;min-width:0% ;" id="scan_rate">进度:<span id="scan_rate_value"></span></span>
+		</div>
+	</div>
+	<div style="height:410px; margin-top:10px;overflow: hidden;overflow-y: auto;font-size: 12px;">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" class=" tabletitle">
+			<tbody>
+				<tr>
+					<td width="20%">Hostinfo</td>
+					<td width="20%">Ip</td>
+					<td width="15%">漏洞情况 <select id="ldqk"><option value="0">全部</option><option value="1">有漏洞</option><option value="2">无漏洞</option></select></td> 
+					<td width="35%">Title</td>
+					<td width="10%">漏洞验证</td>
+				</tr>
+				<tr id="query_loading_tr" style="display:none">
+					<td colspan="4">数据读取中...<img style="width:15px" src="../images/loading2.gif" /></td>
+				</tr>
+			</tbody>
+			<tbody id="san_result1" style="text-align: center;">
+			</tbody>
+			
+			<tbody id="san_result" style="text-align: center;">
+			</tbody>
+			<tbody id="san_result_have" style="text-align: center;display: none;">
+			</tbody>
+			<tbody id="san_result_no" style="text-align: center;display: none;">
+			</tbody>
+
+		</table>
+	</div>
+</div>
+
+<div id="dialog_scan_exp" style="height: 600px;">
+	<p class="close_exp">X</p>
+	
+	<div style="margin-top:30px">
+<div class="bkleft1" style="width: 35%;">
+      <div class="installonecontent installbarT">
+        <strong style="color: #000;">漏洞验证</strong>
+      </div>
+
+      <div class="installonemore" style="width: 100%">
+          <div class="name-p" style="margin-top:10px">
+            <span class="cmd-title" style="vertical-align: top; margin-top: 0px;">漏洞名称</span>
+            <span style="vertical-align: top">:</span>
+            <span style="display: inline-block; width: 60%; height: auto; vertical-align: top" id="vul_name"></span>
+          </div>
+          <div class="name-p" style="margin-top:10px">
+            <span class="cmd-title" style="vertical-align: top; margin-top: 0px;">漏洞描述</span>
+            <span style="vertical-align: top">:</span>
+            <span style="display: inline-block; width: 60%; height:30px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" title="" id="poc_desc"></span>
+          </div>
+          <div class="name-input">
+            <span class="cmd-title">漏洞URL</span>
+            <span>:</span>
+            <input value="" id="vul_url" class="zanyongkuandai leftinput" style="margin-top: 5px;" type="text">
+          </div>
+		    <div class="exp_params_div">
+
+			</div>
+          <div style="margin-left:109px"><input  type="button"  value=" 执 行 " align="center" class="btn btn-primary exp_start"><div class="tips_html2" id="exp_run_tips"></div></div>
+      </div>
+    </div>
+	<div class="bkleri">
+      <div class="installonecontent installbarT">
+        <strong style="color: #000;">验证结果</strong>
+      </div>
+      <div class="installonemore">
+        <div class="progressDiv">
+          <div class="progress">
+            <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 0%; background: rgb(65, 88, 110) none repeat scroll 0% 0%;">
+              0%
+            </div>
+          </div>
+        </div>
+        <div class="progressDiv">
+          状态: <span id="poc-state">无</span>
+        </div>
+        <!--<div class="progressDiv">-->
+          <!--<div class="div" w="70"></div>-->
+        <!--</div>
+
+        <!--<div style="padding-top: 15px; height: 30px; min-height: 30px;" class="bigContent info-contents">
+
+        </div>-->
+
+        <div class="bigContent" style="padding-top: 15px;">
+          <div class="title" style="margin-left:15px">输出信息: </div>
+          <div class="info-contents" style="margin-top: 10px; margin-left: 15px;"><textarea class="notextarea" style="color: black;"></textarea></div>
+        </div>
+
+        <div class="bigContent " style="padding-top: 15px;">
+          <div class="title" style="margin-left:15px">错误信息: </div>
+          <div class="errors-contents" style="margin-top: 10px; margin-left: 15px; color: red; "><textarea class="notextarea" style="color: black;"></textarea></div>
+        </div>
+      </div>
+    </div>
+	</div>
+	<div></div>
+</div>
+<script type="text/javascript">
+//begin exp 验证
+jc_pid_exp = '';
+$(".exp_start").click(function() {
+	to_exp_start($('#FileName').val());
+});
+$(".close_exp").click(function() {
+	$('.pc_bottom').css('display','');
+	$("#dialog_scan_exp").hide();
+	threadkill(jc_pid_exp);
+});
+//end exp 验证
+$("#ldqk").change(function(){
+	var opt_val=$(this).val();
+    if(opt_val==0){
+    	$("#san_result").show()
+    	$("#san_result_have").hide()
+    	$("#san_result_no").hide()
+    }else if(opt_val==1){
+    	$("#san_result").hide()
+    	$("#san_result_have").show()
+    	$("#san_result_no").hide()
+    }else {
+    	$("#san_result").hide()
+    	$("#san_result_have").hide()
+    	$("#san_result_no").show()
+    	
+    	
+    }
+});
+
+	var FoFabugurl = "";
+	var bugnum = 0;
+	var bugreport_id = '';
+	var bugmytimer = '';
+	var Buglist = '';
+	var threadkill = require("../myjs/thread-kill.js")
+	var jc_pid = '';
+	var jc_last = '';
+	var cvs_content = [];
+	var jc_end = false;
+	$(".close").click(function() {
+		$("#fullbg_scan,#dialog_scan").hide();
+		threadkill(jc_pid);
+	});
+
+	$(".but_scan").click(function() {
+		//to_exp('218.59.147.115:8080');
+		//return;
+		var FileName = $('#FileName').val();
+		if(FileName.length < 1) {
+			$('#error_info_btn').html('请先保存!');
+			return;
+		}
+		if(from == 'store') {
+			var content = getPocJsonByRubyFileName(FileName, 1);
+		} else {
+			var content = getPocJsonByRubyFileName(FileName);
+		}
+		if(content.length < 1) {
+			$('#error_info_btn').html('请先保存!');
+			return;
+		}
+		var bh = $("body").height();
+		var bw = $("body").width();
+		$("#fullbg_scan").css({
+			height: bh,
+			width: bw,
+			display: "block"
+		});
+		$("#fullbg_scan,#dialog_scan").show();
+		$('#scan_rate').css('width', '0%');
+		$('#scan_rate_value').html('0%');
+		$('#san_result').html('');
+		$('#san_result1').html('');
+		$('.start_scan').attr("disabled", false);
+		// $('#graphbox').css('display','none');
+		$("#dialog-form").dialog("open");
+	});
+	$(".start_scan").click(function() {//开始扫描
+		bugnum = 0;
+		$('#san_result').html('');//默认清空 ,显数据
+		$('#san_result1').html('');//默认清空 ,显提示
+		isvipaaaa();
+		$('#san_result1').html('');
+		$('#san_result_have').html('');
+		$('#san_result_no').html('');
+		cvs_content = [];
+	    Buglist = '';
+	});
+	$(".stop_scan").click(function() {
+		$('#query_loading_tr').css('display', 'none');
+		$('.start_scan').attr("disabled", false);
+		threadkill(jc_pid);
+	});
+	$(".export_scan").click(function() {
+		// var FileName = $('#FileName').val();
+		downloadCsv(temp_params2);
+	});
+	$(".Report_scan").click(function() {
+		if(Buglist == ''){
+			alert('没有有漏洞的网站!');
+			return;
+		}
+		Bugreport($('#FofaQuery').val());
+	});
+</script>
+<!--end 扫描弹框-->
+<div id="fullbg"></div>
+<div id="dialog">
+	<p class="close">关闭</p>
+	<div>
+		<span id="alert-1">FOFA Query</span>
+		<select id="scan_free_query">
+			<option value="100">免费(100条)</option>
+			<option value="10000">1F币(10000条)</option>
+			<!--<option value="">相应F币(任意条)</option>-->
+		</select>
+		<input type="text" id="FofaQueryCopy">
+		<input type="button" name="Query" id="Query" value="查询" />
+		<input type="button" name="Report" id="Report" value="查看报告" />
+		<img id="Reportloading" src="../images/loading2.gif" alt="">
+	</div>
+	<div id="alert-11">
+		<div id="fofa_search-title">
+			<table width="100%" >
+				<tr>
+					
+			<td style="width: 20%;">HOST</td>
+			<td style="width: 20%;">IP</td>
+			<td style="width: 20%;">PORT</td>
+			<td style="">TITLE</td>
+				</tr>
+			</table>
+		</div>
+		<div id="fofa_search">
+			<div id="fofa_searchContent">
+				<img id="fofaloading" src="../images/loading2.gif">
+				<p id="fofa_search_text"></p>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+<script type="text/javascript">
+	$("#btnal").click(function() {
+		var bh = $("body").height();
+		var bw = $("body").width();
+		$("#fullbg").css({
+			height: bh,
+			width: bw,
+			display: "block"
+		});
+		$("#dialog").show();
+		$('#FofaQueryCopy').val($('#FofaQuery').val());
+	});
+	$(".close").click(function() {
+		$("#fullbg,#dialog").hide();
+	});
+	$("#Query").click(function() {
+		SearchMailPoc();
+	});
+	$("#Report").click(function() {
+		ReportFoFa();
+		$("#Reportloading").show();
+	});
+	var iplist = '';
+
+	function SearchMailPoc() {
+		var UserInfo = GetUserInfo();
+		if(($("#scan_free_query").val() != 100 && UserInfo.vip_level !=2)||($("#scan_free_query").val() =='' && UserInfo.vip_level == 2) ) {
+		//if($("#scan_free_query").val() != 100) {
+			if(!confirm('你确认花费Fofa币进行查询吗？')) {
+				return false;
+			}
+		}
+		iplist = '';
+		$("#Reportloading").show();
+		$('#fofa_search').html('');
+		var keyword = $('#FofaQueryCopy').val();
+		var iconv = require("iconv-lite");
+		//keyword = iconv.encode(keyword, 'gbk').toString('binary');
+		//keyword = iconv.encode(keyword, 'utf-8');
+		var b = new Buffer(keyword);
+		var s = b.toString('base64');
+		s=encodeURIComponent(s);
+		//var UserInfo = GetUserInfo();
+		var get_code_url = getFofaConfig('host') + getFofaConfig('fofa_search');
+		$('#fofa_search_text').hide();
+		$("#fofaloading").show();
+		$.ajax({
+			url: get_code_url + '?email=' + UserInfo.email + '&key=' + UserInfo.key + '&qbase64=' + s + "&fields=host,ip,port,title&limit=" + $("#scan_free_query").val(),
+			dataType: 'json',
+			type: 'get',
+			success: function(data) {
+				if(!data.error) {
+					item="";
+					fofaDetail="";
+					for(var i = 0; i < data.results.length; i++) {
+						
+						iplist += data.results[i][1] + "\n"; //一行一个id
+						var item = item+'<tr><td style="width:20%">' + data.results[i][0] + '</td><td style="width:20%">' + data.results[i][1] + '</td><td style="width:10%">' + data.results[i][2] + '</td><td>' + data.results[i][3].replace(/<\/?.+?>/g,"") + '</td></tr>';
+						
+						
+						
+					}
+					var fofaDetail = $('#fofa_search').append('<table width="100%" class="tab_gz table-bordered">'+item+'</table>'); 
+					$("#Reportloading").hide();
+					if(fofaDetail != "") {
+						$("#fofa_searchContent").hide();
+					}
+				}
+			},
+			error: function(xhr, type, exception) { //获取ajax的错误信息
+				$("#Reportloading").hide();
+				if(type == 'error') {
+					$('#fofa_search').html(JSON.parse(xhr.responseText).errmsg);
+				}
+				//alert(xhr.responseText, "Failed");
+				//$("#poc_tbody2").html('<tr><td style="text-align:center; color:#ff0000">服务器网络异常!</td></tr>');
+			}
+		});
+	}
+
+	var report_id = '';
+	var mytimer = '';
+
+	function ReportFoFa() {
+		
+		var UserInfo = GetUserInfo();
+		var server_url = getFofaConfig('host');
+		var keyword = $('#FofaQueryCopy').val();
+		$.ajax({
+			url: server_url + '/api/v1/exploit/report?email=' + UserInfo.email + '&key=' + UserInfo.key + '&fofaquery=' + keyword,
+			type: 'post',
+			dataType: 'json',
+			data: iplist,
+			success: function(data) {
+				if(!data.error) {
+					report_id = data.id;
+					mytimer = setInterval("Get_FoFa_Report(" + report_id + ")", 1000);
+				}
+			},
+			error: function(error, errmsg) { //获取ajax的错误信息
+				console.log(errmsg);
+			}
+		});
+	}
+	var FoFaurl = "";
+
+	function Get_FoFa_Report(report_id) {
+		var UserInfo = GetUserInfo();
+		var server_url = getFofaConfig('host');
+		$.ajax({
+			url: server_url + '/api/v1/exploit/get_report?email=' + UserInfo.email + '&key=' + UserInfo.key + "&id=" + report_id,
+			dataType: 'json',
+			type: 'get',
+			success: function(data) {
+				if(!data.error) {
+					if(data.state == 2) {
+						FoFaurl = data.url;
+						var aaaaurl = server_url + FoFaurl + '?email=' + UserInfo.email + '&key=' + UserInfo.key;
+						$("#Reportloading").hide();
+						// window.open (aaaaurl, "height=1000, width=800, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no");
+						var BrowserWindow1 = require('electron').remote.BrowserWindow;
+						var win = new BrowserWindow1({
+							width: 800,
+							height: 600,
+							/*frame: false*/
+							webPreferences: {
+								nodeIntegration: false
+							}
+						});
+						win.on('closed', function() {
+							win = null;
+						});
+						win.loadURL(aaaaurl);
+						win.show();
+						clearInterval(mytimer);
+					}
+				}
+			},
+			error: function(xhr, type, exception) { //获取ajax的错误信息
+				//alert(xhr.responseText, "Failed");
+				//$("#poc_tbody2").html('<tr><td style="text-align:center; color:#ff0000">服务器网络异常!</td></tr>');
+			}
+		});
+	}
+</script>
+<!--end fofa查询-->
+
+<!-- strat错误信息弹框 -->
+<style>
+	.body-color,
+	.body-color1 {
+		z-index: 9998;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: #000;
+		opacity: 0.4;
+		filter: alpha(opacity=40);
+		display: none;
+	}
+	
+	.wrongmas,
+	.wrongmas1 {
+		z-index: 9999;
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		width: 300px;
+		
+		border-radius: 5px;
+		display: none;
+		border: solid 2px #666;
+		background-color: #ffffff;
+		box-shadow: 0 0 10px #666;
+	}
+	
+	.wrongmas span,
+	.wrongmas1 span {
+		justify-content: center;
+		
+		font-size: 15px;
+	}
+	
+	.close-window,
+	.close-window1 {
+		border-bottom: 1px solid #ddd;
+		padding: 8px;
+		position: relative;
+	}
+	
+	.close-window .close,
+	.close-window1 .close {
+		float: right;
+		color: #999;
+		padding: 4px;
+		font: bold 14px/14px simsun;
+		text-shadow: 0 1px 0 #ddd;
+	}
+	
+	.close-window .close:hover,
+	.close-window1 .close:hover {
+		color: #444;
+	}
+</style>
+<div class="wrongmas">
+	<div class="close-window">
+		<a href="javascript:;" title="关闭" class="close">×</a>
+		<span>提示信息</span>
+	</div>
+	<div class="gmjs_tab1">
+		<div id="error_info_btn2" style="color:#FF0000;  padding: 40px 40px;"></div>
+	</div>
+</div>
+<div class="body-color"></div>
+<script>
+	function wrongmas() {
+		$('.body-color').fadeIn(100);
+		$('.wrongmas').slideDown(200);
+		$('.close-window .close').click(function() {
+			$('.body-color').fadeOut(100);
+			$('.wrongmas').slideUp(200);
+		});
+	}
+</script>
+
+<!-- end 错误弹框提示 -->
+
+<!-- 未认证不可扫描start -->
+<script>
+	var login_url = getFofaConfig("host") + getFofaConfig("login_url");
+
+	function isvipaaaa() { //扫描
+		$.ajax({
+			url: login_url + '?email=' + UserInfo.email + '&key=' + UserInfo.key,
+			dataType: 'json',
+			type: 'get',
+			success: function(data) {
+				//console.log($("#scan_free").val());
+				//console.log(data);
+				if(data.fcoin == 0 && $("#scan_free").val() != 100 && UserInfo.vip_level != 2) {
+					//$('#san_result1').html('');
+					$('#san_result1').append('<tr><td colspan="4" rowspan="4">你的账号fofa币不足不能进行扫描。</td></tr>');
+					return;
+				}
+				if(($("#scan_free").val() != 100 && UserInfo.vip_level !=2)||($("#scan_free").val() =='' && UserInfo.vip_level == 2) ) {
+					var scanok = scan_sure();
+					if(scanok == false) {
+						return
+					}
+				}
+
+				if(data.is_verified) {
+					// wrongmas1("对不起你还没有通过审核,请联系管理员!!");
+					$('#query_loading_tr').css('display', '');
+					$(".but_bc").click();
+					$('#scan_rate').css('width', '0%');
+					$('#scan_rate_value').html('0%');
+					$('#san_result').html('');
+					$('.start_scan').attr("disabled", true);
+					$('.stop_scan').attr("disabled", false);
+					$('.export_scan').attr("disabled", false);
+					$('.Report_scan').attr("disabled", false);
+					// $('#graphbox').css('display','');
+					var FileName = $('#FileName').val();
+					//alert(FileName+":"+temp_params2);
+					if(from == 'store') {
+						scanPoc(temp_params2, 1, $("#scan_free").val());
+					}else{
+						scanPoc(temp_params2, 0, $("#scan_free").val());
+					}
+				} else {
+					$('#contentarea').html("");
+					wrongmas1("对不起你还没有通过审核,请联系管理员!!");
+				}
+			},
+			error: function(xhr, type, exception) { //获取ajax的错误信息
+				//alert(JSON.parse(xhr.responseText).error);
+				// $('#error_info').html("账号信息错误!");
+				// $('#middle-img').hide();
+			}
+		});
+	};
+
+	function wrongmas1(contentword) {
+		$('.body-color1').fadeIn(100);
+		$('.wrongmas1').slideDown(200);
+		$('.close-window1 .close').click(function() {
+			$('.body-color1').fadeOut(100);
+			$('.wrongmas1').slideUp(200);
+		});
+		var item = '<span>' + contentword + '</span>';
+		$('#contentarea').append(item);
+	};
+</script>
+<div class="wrongmas1">
+	<div class="close-window1">
+		<a href="javascript:;" title="关闭" class="close">×</a>
+		<span>提示信息</span>
+	</div>
+	<div id="contentarea" style="color:#FF0000;line-height: 130px;">
+		<!-- <span>对不起你还没有通过审核,请联系管理员!!</span> -->
+		<!-- <span id="error_info_btn2" ></span> -->
+	</div>
+</div>
+
+<div class="body-color1"></div>
+<!-- 未认证不可扫描end -->
+
+<!--
+ 单ip扫描
+    -->
+<div id="fullbg2" style="height: 837px; width: 1539px; display: none"></div>
+<div id="dialog2">
+	<p class="close2" style="cursor:pointer">关闭</p>
+	<div> <input id="ip_input2" value="" style="margin-right: 10px;display:inline-block" class="form-control"><button id="scan_ip2" type="button" style="padding:6px 19px">单ip扫描</button><span class="scantxt" style=" padding-left: 15px; font-size: 14px;"></span>
+	</div>
+	<div class="dialog2txt"><textarea class="dialog2txt_textarea" style="width:100%; height:100%; border:none"></textarea></div>
+</div>
+<script>
+$(function() {
+
+
+
+$(document).on("click", "#a_rename", function() {
+			if($("#input_rename").val() == "") {
+				$('#error_info_btn2 span').html('文件名不能为空!');
+				return;
+			}
+		  if(!ChackclientName($("#input_rename").val())){
+			$('#error_info_btn2 span').html('文件名格式错误!,文件名由字母、数字、下划线、点组成。');
+			return false;
+		  }
+		  renameFileName($("#FileName").val(),$("#input_rename").val());
+
+});
+
+
+function renameFileName(oldname,newname){
+
+  var pathd = require("path");
+  var extname = pathd.extname(newname);
+  if(extname !=".rb"){newname=newname+".rb"}
+  var root_path = root_path_base;
+  var fs = require('fs');
+  var fofa_scan = getFofaConfig('fofa_scan');
+  var oldname_path = root_path +fofa_scan+'/exploits/'+oldname;
+  var newname_path = root_path +fofa_scan+'/exploits/'+newname;
+  try {
+	fs.renameSync(oldname_path,newname_path);
+	$("#FileName").val(newname);
+	temp_params2 = newname;
+	$('#error_info_btn2 span').html('重命名成功');
+	loadAllPocBatch(1); //更新预加载POC数据
+	
+  } catch (ex) {
+	
+  }
+}
+
+
+
+		$(".close2").click(function() {
+			$("#fullbg2").hide();
+			$("#dialog2").hide();
+		});
+
+		$("#scan_ip").click(function() {
+			if($('#ip_input').val() == "") {
+				return;
+			}
+			$("#fullbg2").show();
+			$("#dialog2").show();
+
+			var bh = $("body").height();
+			var bw = $("body").width();
+			$(".dialog2").css({
+				height: bh,
+				width: bw,
+				display: "block"
+			});
+
+			$("#ip_input2").val($("#ip_input").val())
+			var FileName = $('#FileName').val();
+			if(from == 'store') {
+				scanPoc_one(FileName, 1, $("#ip_input").val());
+			}else{
+				scanPoc_one(FileName, 0, $("#ip_input").val());
+			}
+
+		});
+
+		$("#scan_ip2").click(function() {
+			$("#fullbg2").show();
+			$("#dialog2").show();
+
+			var bh = $("body").height();
+			var bw = $("body").width();
+			$(".dialog2").css({
+				height: bh,
+				width: bw,
+				display: "block"
+			});
+
+			var FileName = $('#FileName').val();
+			if(from == 'store') {
+				scanPoc_one(FileName, 1, $("#ip_input2").val());
+			}else{
+				scanPoc_one(FileName, 0, $("#ip_input2").val());
+			}
+
+		});
+
+	});
+</script>
+<script>
+$(function(){
+		var UserInfo = GetUserInfo();
+		//begin fofa serve
+		if(!UserInfo.fofa_server){
+			$('.but_fb').css('display','none');
+		}
+		//end fofa server
+	$.each(recommandation_json,function(i,v){
+		$('#ldwhtpl').append('<option value="'+i+'">'+v.name+'</option>');
+	});
+	$("#ldwhtpl").change(function(){
+		var thisselect = $(this).val();
+		if(thisselect.length < 1){
+			return;
+		}
+		editor.setValue(recommandation_json[thisselect]['jy']);
+		editor1.setValue(recommandation_json[thisselect]['wh']);
+	});
+	$('.glyphicon-folder-open').click(function(){
+		if(from == 'store') {
+			showPocPath($('#FileName').val(),1);
+		}else{
+			showPocPath($('#FileName').val(),0);
+		}
+	
+	});
+	//begin 高级会员免费1W
+	var UserInfo = GetUserInfo();
+	if(UserInfo.vip_level && UserInfo.vip_level == 2){
+		$('#scan_free_query').find('option').eq(1).text('免费(10000)');
+		$('#scan_free').find('option').eq(1).text('免费(10000)');
+	}
+	//end
+});
+</script>

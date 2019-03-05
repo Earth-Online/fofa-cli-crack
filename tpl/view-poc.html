@@ -1,0 +1,609 @@
+<link rel="stylesheet" media="screen" href="../css/bootstrap.css" />
+<link rel="stylesheet" media="screen" href="../css/font-awesome.css" />
+<link rel="stylesheet" media="screen" href="../css/animate.min.css" />
+<link rel="stylesheet" media="screen" href="../css/fofa_pc.css" />
+
+<script src="../js/jquery.min.js"></script>
+
+<script type="text/javascript" src="../js/uutab_v1.js"></script>
+<script type="text/javascript" src="../js/tools.js"></script>
+
+<!--引用的库-->
+<link href="../myjs/jquery-ui.css" type="text/css" rel="stylesheet">
+<script src="../myjs/jquery-ui.min.js" type="text/javascript"></script>
+<script src="../myjs/jquery.ui-contextmenu.min.js"></script>
+<link href="../myjs/ui.fancytree.css" rel="stylesheet" type="text/css">
+<script src="../myjs/jquery.fancytree-all.min.js" type="text/javascript"></script>
+<link href="../myjs/submit_poc.css" rel="stylesheet" type="text/css">
+<script>
+	$(function() {
+		/*插件引用*/
+		$(document).uutab({
+
+			u_title: '.pc_nav a', //导航dom组 
+			u_content: '.pc_main .qh_mod', //内容dom组  
+			u_act: 'act', //切换样式  
+			u_event: 'click' //事件  
+				//u_entrances:'animated uu_height'//内容进入特效   
+
+		});
+
+	})
+</script>
+<script>
+	$(function() {
+		n = window.n;
+
+		/*插件引用*/
+
+		$(document).uutab({
+
+			u_title: '.q2 .nav_t li', //导航dom组 
+			u_content: '.q2 .mod_all .mod', //内容dom组  
+			u_act: 'act', //切换样式  
+			u_event: 'click' //事件  
+				//u_entrances:'animated uu_height'//内容进入特效   
+
+		});
+
+		/*保存*/
+
+		/*编辑时，初始化值*/
+		var testUrl = document.location;
+		var URL = require('url');
+		var urlObj = URL.parse(testUrl.toString(), true);
+		window.json_str = '';
+		window.th = 0;
+		window.pindex = 0;
+		if(temp_params1 == 'edit') {
+			//var Pid = urlObj.query.Pid;
+			var FileName = temp_params2;
+			if(from == 'store') {
+
+				$('#span_view_edit').html('<input type="button" name="" value="编辑" align="center" class="btn btn-primary btn-xl " onclick=to_routePage("edit-poc.html?from=store&act1=edit&FileName1=' + FileName + '")>');
+				pocJsonInfo = getPocJsonByRubyFileName(FileName, 1);
+			} else {
+
+				pocJsonInfo = getPocJsonByRubyFileName(FileName);
+				$('#span_view_edit').html('<input type="button" name="" value="编辑" align="center" class="btn btn-primary btn-xl " onclick=to_routePage("edit-poc.html?act1=edit&FileName1=' + FileName + '")>');
+
+			}
+
+			pocJsonInfo = JSON.parse(pocJsonInfo);
+			pocJsonInfo.FileName = FileName;
+			//console.log(pocJsonInfo);
+			//console.log(JSON.stringify(pocJsonInfo));
+			to_initEdit(pocJsonInfo); //编辑基本信息
+
+		}
+
+	});
+
+	function to_initEdit(item) {
+		//var item = getPocByPid(Pid);
+
+		$('#Name').text(item.Name);
+		$('#FileName').text(item.FileName);
+		$('#Description').text(item.Description);
+		$('#Product').text(item.Product);
+		$('#Homepage').text(item.Homepage);
+		$('#Homepage').attr("href", item.Homepage);
+		$('#DisclosureDate').text(item.DisclosureDate);
+		$('#Level').text(item.Level);
+		$('#Effect').text(item.Effect);
+		$('#Author').text(item.Author);
+		$('#FofaQuery').text(item.FofaQuery);
+		var strre = item.References.toString();
+		$('#References').text(item.References);
+		
+
+		//console.log(item.ScanSteps);
+	}
+</script>
+
+<div class="container-fluid">
+
+	<div class="pc_nav">
+		<a class="act">漏洞详细信息</a>
+
+	</div>
+
+	<div class="pc_main wd_mian">
+
+		<div class="qh_mod">
+			<form id="jsForm" name="jsForm" action="js/test.json" method="post">
+				<div class="row">
+					<div class="col-xs-1">
+						<!--     <div class="wd_lert">描述<br>
+信息</div> -->
+					</div>
+					<div class="col-xs-11">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-striped">
+							<tbody>
+								<tr>
+									<td width="10%">文件名</td>
+									<td id="FileName"></td>
+								</tr>
+								<tr>
+									<td width="10%">标题</td>
+									<td id="Name"></td>
+								</tr>
+								<tr>
+									<td>描述</td>
+									<td id="Description"></td>
+								</tr>
+								<tr>
+									<td>产品</td>
+									<td id="Product"></td>
+								</tr>
+								<tr>
+									<td>产品主页</td>
+									<td>
+										<a href="#" target="_blank" id="Homepage"></a>
+									</td>
+								</tr>
+								<tr>
+									<td>发现日期</td>
+									<td id="DisclosureDate"></td>
+								</tr>
+
+							</tbody>
+						</table>
+
+					</div>
+
+				</div>
+
+				<div class="row">
+					<div class="col-xs-1">
+						<!--     <div class="wd_lert">危害<br>
+信息</div> -->
+					</div>
+					<div class="col-xs-11">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-striped">
+							<tbody>
+								<!--<tr>
+      <td width="10%">等级</td>
+      <td id="Level"></td>
+    </tr>-->
+
+								<tr>
+									<td width="10%">作者</td>
+									<td id="Author"></td>
+								</tr>
+
+							</tbody>
+						</table>
+
+					</div>
+
+				</div>
+				<div class="row">
+					<div class="col-xs-1">
+						<!--<div class="wd_lert">来源<br>
+信息</div> -->
+					</div>
+					<div class="col-xs-11">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-striped">
+							<tbody>
+								<tr>
+									<td width="10%">来源</td>
+									<td id="References"></td>
+								</tr>
+
+								<tr>
+									<td>查询规则</td>
+									<td id="FofaQuery"></td>
+								</tr>
+
+							</tbody>
+						</table>
+
+					</div>
+
+				</div>
+
+			</form>
+		</div>
+
+	</div>
+
+	<div class="pc_bottom ">
+
+		<div class="form-group">
+			<div class="col-sx-5 text-left f_l  mar_t20 mar_l15">
+				<input type="button" name="commit" value="返回列表" onclick="to_routePage('poc.html')" align="center" class="btn btn-primary btn-xl">
+
+			</div>
+
+			<div class="col-sx-5 text-right f_r mar_t20 ">
+				<span id="error_info_btn" style="color: #ff0000"></span>
+				<span id="span_view_edit"></span>
+
+				<input type="button" name="commit" value="扫描测试" align="center" class="btn btn-primary btn-xl but_scan">
+
+			</div>
+		</div>
+	</div>
+
+</div>
+
+<!--start 扫描弹框-->
+<style>
+	#graphbox {
+		border: 0px solid #e7e7e7;
+	
+	
+		background-color: #f2f4f7;
+		border-radius: 30px;
+		margin: 5px 0;
+	}
+	
+	.graph {
+		height: 33px;
+		position: relative;
+		font-size: 13px;
+		font-weight: 700;
+	}
+	
+	.graph .green {
+		position: relative; overflow:hidden;white-space:nowrap;
+		text-align: left;
+		color: #ffffff;
+		background-color: #3e5772; margin: 8px 0px;
+		height: 35px;
+		font-family: Arial;
+		border-radius: 30px; text-indent: 8px;
+		padding: 8px 0px 8px 0px;
+		display: block;
+	}
+	
+	.markbug {
+		color: rebeccapurple;
+		background: antiquewhite;
+		color: red;
+		text-align: center;
+		font-size: 12px;
+	}
+	
+	.btn-primary.disabled,
+	.btn-primary[disabled],
+	fieldset[disabled] .btn-primary,
+	.btn-primary.disabled:hover,
+	.btn-primary[disabled]:hover,
+	fieldset[disabled] .btn-primary:hover,
+	.btn-primary.disabled:focus,
+	.btn-primary[disabled]:focus,
+	fieldset[disabled] .btn-primary:focus,
+	.btn-primary.disabled:active,
+	.btn-primary[disabled]:active,
+	fieldset[disabled] .btn-primary:active,
+	.btn-primary.disabled.active,
+	.btn-primary[disabled].active,
+	fieldset[disabled] .btn-primary.active {
+		background-color: #8a9eb2;
+		border-color: #8a9eb2;
+	}
+	
+	.tabletitle {
+		margin: 0px 0px;
+		margin-top: 0px; 
+	}
+	#san_result1{color:#f60;font-size:16px; }
+	#san_result td,#san_result_have td,#san_result_no td{
+		padding: 5px 0px 5px 0px;
+		/*white-space: nowrap;overflow: hidden;text-overflow: ellipsis; border: 1px solid #8a9eb2; background-color: #f2f4f7; border-radius: 8px;*/
+	}
+	
+	.btn-primary1 {
+		color: #ffffff;
+		background-color: #3e5772;
+		border-color: #3e5772;
+		border-radius: 25px;
+		font-size: 14px;
+		margin-right: 20px;
+	}
+	
+	
+#dialog_scan .btn:hover, #dialog_scan .btn:focus, #dialog_scan .btn.focus {
+    color: #fff;
+    text-decoration: none;
+}
+</style>
+
+<div id="fullbg"></div>
+<div id="dialog_scan" style="height: 600px;">
+    <p class="close">X</p>
+      <div class="scan_input">
+    Data Amount
+    <select id="scan_free">
+    <option value="100">免费(100条)</option>
+    	<option value="10000">1F币(10000条)</option>
+        <option value="">相应F币(任意条)</option>
+    </select>
+    
+    </div>
+<div class="scan_but">
+<input type="button" name="button" value="开始扫描" align="center" class="btn btn-primary1 btn-xl start_scan">
+<input disabled="true" type="button" name="commit" value="停止扫描" align="center" class="btn btn-primary1 btn-xl stop_scan">
+<input disabled="true" type="button" name="commit" value="导出结果" align="center" class="btn btn-primary1 btn-xl export_scan">
+<input disabled="true" type="button" name="commit" value="导出报表" align="center" class="btn btn-primary1 btn-xl Report_scan">
+<div style="text-align: center;">漏洞个数:<span class="bugnum" style="margin-right: 50px;">0</span>扫描总数:<span class="bugallnum" style="margin-right: 50px;">0</span>Fofa查询总数：<span class="fofaqueryallnum">0</span></div>
+</div>
+<div id="graphbox" style="margin-top: 0px;margin-left: 15px; margin-right: 15px;">
+          <div class="graph"><span class="green" style="width: 0%;min-width:0% ;" id="scan_rate">进度:<span id="scan_rate_value"></span></span></div>
+          <!-- <div class="jd_txt">进度:<span id="scan_rate_value"></span></div> -->
+</div>
+<div style="height:410px; margin-top:10px;overflow: hidden;overflow-y: auto;font-size: 12px;">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class=" tabletitle" >
+  <tbody>
+     <tr>
+      <td width="20%">Hostinfo</td> 
+      <td width="20%">Ip</td> 
+      <td width="15%">漏洞情况 <select id="ldqk"><option value="0">全部</option><option value="1">有漏洞</option><option value="2">无漏洞</option></select></td>
+      <td width="35%">Title</td>
+	  <td width="10%">漏洞验证</td>
+	 
+      </tr>
+    <tr id="query_loading_tr" style="display:none"><td colspan="4" >数据读取中...<img  style="width:15px" src="../images/loading2.gif"/></td></tr>
+  </tbody>
+  <tbody id="san_result" style="text-align: center;">
+  </tbody>
+  <tbody id="san_result1" style="text-align: center;">
+  </tbody>
+  <tbody id="san_result_have" style="text-align: center;display: none;">
+			</tbody>
+			<tbody id="san_result_no" style="text-align: center;display: none;">
+			</tbody>
+</table>
+</div>
+</div>
+<div id="dialog_scan_exp" style="height: 600px;">
+	<p class="close_exp">X</p>
+	
+	<div style="margin-top:30px">
+<div class="bkleft1" style="width: 35%;">
+      <div class="installonecontent installbarT">
+        <strong style="color: #000;">漏洞验证</strong>
+      </div>
+
+      <div class="installonemore" style="width: 100%">
+          <div class="name-p" style="margin-top:10px">
+            <span class="cmd-title" style="vertical-align: top; margin-top: 0px;">漏洞名称</span>
+            <span style="vertical-align: top">:</span>
+            <span style="display: inline-block; width: 60%; height: auto; vertical-align: top" id="vul_name"></span>
+          </div>
+		            <div class="name-p" style="margin-top:10px">
+            <span class="cmd-title" style="vertical-align: top; margin-top: 0px;">漏洞描述</span>
+            <span style="vertical-align: top">:</span>
+            <span style="display: inline-block; width: 60%; height:30px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" title="" id="poc_desc"></span>
+          </div>
+          <div class="name-input">
+            <span class="cmd-title">漏洞URL</span>
+            <span>:</span>
+            <input value="80.68.125.208" id="vul_url" class="zanyongkuandai leftinput" style="margin-top: 5px;" type="text">
+          </div>
+		    <div class="exp_params_div">
+
+			</div>
+          <div style="margin-left:109px"><input  type="button"  value=" 执 行 " align="center" class="btn btn-primary exp_start"><div class="tips_html2" id="exp_run_tips"></div></div>
+      </div>
+    </div>
+	<div class="bkleri">
+      <div class="installonecontent installbarT">
+        <strong style="color: #000;">验证结果</strong>
+      </div>
+      <div class="installonemore">
+        <div class="progressDiv">
+          <div class="progress">
+            <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 0%; background: rgb(65, 88, 110) none repeat scroll 0% 0%;">
+              0%
+            </div>
+          </div>
+        </div>
+        <div class="progressDiv">
+          状态: <span id="poc-state">无</span>
+        </div>
+        <!--<div class="progressDiv">-->
+          <!--<div class="div" w="70"></div>-->
+        <!--</div>
+
+        <!--<div style="padding-top: 15px; height: 30px; min-height: 30px;" class="bigContent info-contents">
+
+        </div>-->
+
+        <div class="bigContent" style="padding-top: 15px;">
+          <div class="title" style="margin-left:15px">输出信息: </div>
+          <div class="info-contents" style="margin-top: 10px; margin-left: 15px;"></div>
+        </div>
+
+        <div class="bigContent " style="padding-top: 15px;">
+          <div class="title" style="margin-left:15px">错误信息: </div>
+          <div class="errors-contents" style="margin-top: 10px; margin-left: 15px; color: red; "></div>
+        </div>
+      </div>
+    </div>
+	</div>
+	<div></div>
+</div>
+<script type="text/javascript">
+//begin exp 验证
+jc_pid_exp = '';
+$(".exp_start").click(function() {
+	to_exp_start(temp_params2);
+});
+$(".close_exp").click(function() {
+	$('.pc_bottom').css('display','');
+	$("#dialog_scan_exp").hide();
+	threadkill(jc_pid_exp);
+});
+//end exp 验证
+$("#ldqk").change(function(){
+	var opt_val=$(this).val();
+    if(opt_val==0){
+    	$("#san_result").show()
+    	$("#san_result_have").hide()
+    	$("#san_result_no").hide()
+    }else if(opt_val==1){
+    	$("#san_result").hide()
+    	$("#san_result_have").show()
+    	$("#san_result_no").hide()
+    }else {
+    	$("#san_result").hide()
+    	$("#san_result_have").hide()
+    	$("#san_result_no").show()
+    	
+    	
+    }
+});
+
+var FoFabugurl = "";
+var bugnum = 0;
+var bugreport_id = '';
+var bugmytimer = '';
+var Buglist = '';
+var threadkill = require("../myjs/thread-kill.js") 
+var jc_pid = '';
+var jc_last = '';
+var cvs_content = [];
+var jc_end = false;
+$(".close").click(function(){
+    $("#fullbg,#dialog_scan").hide();
+    threadkill(jc_pid);
+});
+$(".but_scan").click(function(){
+	var bh = $("body").height();
+	var bw = $("body").width();
+    $("#fullbg").css({
+        height: bh,
+        width: bw,
+        display: "block"
+    });
+    $("#fullbg,#dialog_scan").show();
+    $('#scan_rate').css('width','0%');
+    $('#scan_rate_value').html('0%');
+    $('#san_result').html('');
+	$('#san_result1').html('');
+    $('.start_scan').attr("disabled",false);
+    // $('#graphbox').css('display','none');
+    $( "#dialog-form" ).dialog("open");
+});
+$(".start_scan").click(function(){
+	 bugnum = 0;
+	 $('#san_result').html('');
+	 $('#san_result1').html('');
+	 $('#san_result_have').html('');
+	 $('#san_result_no').html('');
+	 cvs_content = [];
+	 Buglist = '';
+	isvipaaaa();
+  	// $('#san_result1').html('');
+});
+$(".stop_scan").click(function(){
+	$('#query_loading_tr').css('display','none');
+    $('.start_scan').attr("disabled",false);
+    threadkill(jc_pid);
+});
+$(".export_scan").click(function(){
+    downloadCsv(temp_params2);
+});
+$(".Report_scan").click(function(){
+    Bugreport ($('#FofaQuery').text());
+});
+</script>
+<!--end 扫描弹框-->
+
+<!-- 未认证不可扫描start -->
+<script>
+var login_url = getFofaConfig("host")+getFofaConfig("login_url");
+var UserInfo = GetUserInfo();
+
+function isvipaaaa(){
+ $.ajax({    
+    url : login_url+'?email='+UserInfo.email+'&key='+UserInfo.key,
+    dataType:  'json',
+    type :'get',
+    success: function(data){
+			 if(data.fcoin == 0 && $("#scan_free").val()!=100) {
+			//$('#san_result1').html('');
+			$('#san_result1').append('<tr><td colspan="4" rowspan="4">你的账号fofa币不足不能进行扫描。</td></tr>');
+				return;
+			}
+			if($("#scan_free").val()!=100){
+				var scanok=scan_sure();
+				if(scanok==false){return}
+			}
+      if(data.is_verified){  
+      	// $('#contentarea').html("");
+       //  wrongmas("对不起你还没有通过审核,请联系管理员!!");
+  			// $('#san_result1').html('');
+			$('#query_loading_tr').css('display','');
+		    $('#scan_rate').css('width','0%');
+		    $('#scan_rate_value').html('0%');
+		    $('#san_result').html('');
+		    $('.start_scan').attr("disabled",true);
+		    $('.stop_scan').attr("disabled",false);
+		    $('.export_scan').attr("disabled",false);
+		    $('.Report_scan').attr("disabled",false);
+		    // $('#graphbox').css('display','');
+		    var FileName = $('#FileName').val();
+		    //scanPoc(temp_params2);
+			//console.log(pocJsonInfo);
+			if(pocJsonInfo.HasExp){
+				var isexp = 1;
+			}else{
+				var isexp = 0;
+			}
+			if(from == 'store') {
+				scanPoc(temp_params2,1,$("#scan_free").val(),isexp);
+			}else{
+				scanPoc(temp_params2,0,$("#scan_free").val(),isexp);
+			}
+      }else{
+      		$('#contentarea').html("");
+        	wrongmas("对不起你还没有通过审核,请联系管理员!!");
+      }
+    },
+   error: function (xhr, type, exception) {//获取ajax的错误信息
+      //alert(JSON.parse(xhr.responseText).error);
+      // $('#error_info').html("账号信息错误!");
+      // $('#middle-img').hide();
+   }
+  }); 
+};
+function wrongmas(contentword){
+    $('.body-color').fadeIn(100);
+        $('.wrongmas').slideDown(200);
+    $('.close-window .close').click(function() {
+        $('.body-color').fadeOut(100); 
+        $('.wrongmas').slideUp(200);
+    });
+    var item = '<span>'+contentword+'</span>';
+    $('#contentarea').append(item);
+};
+</script>
+<style>
+.body-color {z-index: 9998;position: fixed;top: 0;left: 0;width: 100%;height: 100%;background: #000;opacity: 0.4;filter: alpha(opacity=40);display: none;}
+.wrongmas {z-index: 9999;position: fixed;top: 50%;left: 50%;transform: translate(-50%,-50%);width: 300px;height: 200px;border-radius: 5px;display: none;border: solid 2px #666;background-color: #ffffff;box-shadow: 0 0 10px #666;} 
+.wrongmas span{ justify-content: center;display: flex;font-size: 15px;}  
+.close-window {border-bottom: 1px solid #ddd;padding: 8px;position: relative;}
+.close-window .close {float: right;color: #999;padding: 4px;font: bold 14px/14px simsun;text-shadow: 0 1px 0 #ddd;}
+.close-window .close:hover {color: #444;}
+</style>
+<div class="wrongmas">
+    <div class="close-window">
+        <a href="javascript:;" title="关闭" class="close">×</a>
+        <span>注意</span>
+    </div>
+    <div id="contentarea" style="color:#FF0000;line-height: 130px;">
+    	<!-- <span>对不起你还没有通过审核,请联系管理员!!</span> -->
+        <!-- <span id="error_info_btn2" ></span> -->
+    </div>
+ </div>
+<div class="body-color"></div>
+
+
+<!-- 未认证不可扫描end -->
+	
+	
+	

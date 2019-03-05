@@ -1,0 +1,144 @@
+<style>
+p {
+	text-align: left;
+	font-size: 12px;
+	margin-bottom: 10px;
+}
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+	font-weight: 400;
+	font-size: 12px;
+	line-height: 1.1;
+	color: #3e5772;
+}
+.qh_mod {
+	padding: 10px 15px;
+}
+.bjq_title {
+	margin-right: 20px;
+	cursor: default
+}
+.bjq_content {
+	font-size: 12px;
+	font-family: "宋体";
+	padding: 20px 30px;
+	line-height: 24px;
+}
+.pc_nav a {
+	font-size: 12px;
+}
+.download_tips_div {
+	width: 1000px;
+	margin: 0 auto;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	color: #f60;
+	font-size: 14px
+}
+.download_tips_div a {
+	color: #000
+}
+.download_tips_div a:hover {
+	color: #2793ff
+}
+</style>
+<script src="../js/jquery.min.js">
+</script>
+<script type="text/javascript" src="../js/uutab_v1.js"></script>
+<script type="text/javascript" src="../js/tools.js"></script>
+<script>
+
+$(function(){
+	
+	
+	
+	$(".bjq_title").click(function(){
+		
+		if($(this).next().is(":hidden") ){$(this).next().slideDown();}else{$(this).next().hide();}
+		
+		})
+	/*插件引用*/
+
+		$(document).uutab({
+
+			u_title: '.pc_nav a', //导航dom组 
+			u_content: '.pc_main .qh_mod', //内容dom组  
+			u_act: 'act', //切换样式  
+			u_event: 'click' //事件  
+				//u_entrances:'animated uu_height'//内容进入特效   
+
+		});
+	})
+</script>
+<div class="pc_nav" style="margin-bottom: 10px;"> <a >FAQ文档</a><a class="">POC帮助文档</a><a class="act">更新日志</a> </div>
+<div class="pc_main">
+  <div class="qh_mod" style="display:none">
+    <p>
+    <div class="bjq_title">
+      <div class="bjq_title_txt"><i class="fa fa-chevron-circle-right"></i><span>收什么POC？</span></div>
+    </div>
+    <div class="bjq_content"> 1.一定要是通用的，怎么算是通用？（互联网存在50以上的案例）<br>
+      2.能直接验证的，一些无回显的漏洞就不满足条件<br>
+      3.有一定危害的，至少能获取敏感信息或者的权限的，xss暂时不收，不过大型论坛 社交程序的xss可以考虑<br>
+      4.能快速得到响应的，由于fofocli是用于全网扫描，而不是对单个对象的扫描，所以请求量会很大，像一些延时注入之类的漏洞就不满足条件<br>
+      5.包括但不限于web方面的漏洞，只要fofa中有对应端口的数据就可以。
+      </p>
+    </div>
+    <p>
+    <div class="bjq_title">
+      <div class="bjq_title_txt"><i class="fa fa-chevron-circle-right"></i><span>POC价格？</span></div>
+    </div>
+    <div class="bjq_content"> 1.漏洞影响的对象是我们的定价因素<br>
+      2.漏洞影响的数量是我们的定价因素<br>
+      3.漏洞的危害是我们的定价因素<br>
+      4.漏洞是否为0day是我们的定价因素
+      </p>
+      <p>简单来说就是我们不单单以影响数量为评判的唯一标准，我们更欢迎影响到更多大企业的、危害高的POC，比如大企业常用的email。举个栗子：企业oa、email之类的程序的POC会有额外加成~</p>
+    </div>
+    <p>
+    <div class="bjq_title">
+      <div class="bjq_title_txt"><i class="fa fa-chevron-circle-right"></i><span>常见问题？</span></div>
+    </div>
+    <div class="bjq_content"> <strong>1.提交不成功？</strong><br>
+      可能原因：<br>
+      1.POC信息填写不完整、有问题<br>
+      2.文件名重复
+      </p>
+      3.在代理的情况下，由于网络的原因
+      <p><strong>2.	审核不通过</strong><br>
+        可能原因：<br>
+        1.POC重复<br>
+        2.POC存在问题<br>
+        3.无法验证POC有效性<br>
+      4.PoC属于不收录的范围 </p>
+       <p><strong>3.PoC降价</strong><br>
+        可能原因：<br>
+        1.PoC的信息不完整或者有误，如：产品主页、来源等 <br>
+        2.PoC查询规则有误<br>
+        3.此PoC与其他PoC触发点相同，实际上属于同一漏洞<br>
+        4.若0day与其他的非0day漏洞产生原因一致，但处于不同的文件，则降价或者作为Nday处理
+        </p>
+      </div>
+  </div>
+  <div class="qh_mod" style="display:none">
+    <iframe id="myiframe2222" src="poc-help.html" frameborder="0"  scrolling="auto" width="100%" height="9800px"></iframe>
+  </div>
+  <div class="qh_mod">
+    <div class="download_tips_div">新版本增加了许多新功能，为更好用户体验，请升级到最新版本。 <a style="cursor:pointer" onClick="to_downloadSoft()">下载</a></div>
+    <iframe id="myiframe" src="" frameborder="0"  scrolling="auto" width="100%" height="1000px"></iframe>
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){
+  $("#myiframe").attr('src','http://fofacli.fofa.so/?from=fofacli&v='+Math.random());
+
+  if($('#update_img').is(":hidden")){
+	$('.download_tips_div').css('display','none');
+  }else{
+	$('.download_tips_div').css('display','');
+  }
+});
+function to_downloadSoft(){
+	const {shell} = require('electron'); 
+    shell.openExternal('https://fofa.so/about_client');
+}
+</script>

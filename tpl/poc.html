@@ -1,0 +1,933 @@
+<script src="../js/jquery.min.js">
+</script>
+<script type="text/javascript" src="../js/uutab_v1.js"></script>
+<script>
+var pm_w=(screen.width-1555)/2;
+//window.moveTo(pm_w, 50);//移动窗口   
+//window.resizeTo(1555, 895); </script>
+<style>
+.lbottom{top:0px;}
+	html,
+	body {
+		height: 100%;
+		margin: 0px;
+		padding: 0px;
+	}
+	
+	.table>thead>tr>th,
+	.table>tbody>tr>th,
+	.table>tfoot>tr>th {
+		background-color: #f2f4f7;
+		padding: 10px 0px;
+		border-color: #e8ecf3;
+	}
+	
+	td {
+		word-break: break-all;
+		overflow: hidden;
+	}
+	
+	.addtab {
+		border-radius: 5px;
+		color: #fff;
+		background-color: #fff;
+		border: 1px solid #b5bdc9;
+		border-bottom: 0px;
+		border-radius: 3px 3px 0px 0px;
+		color: #3e5772;
+		margin-left: 8px;
+		font-size: 36px;
+		height: 40px;
+		padding: 0px 20px;
+		line-height: 40px;
+		display: inline-block;
+		position: relative;
+		cursor: pointer;
+		top: 0px;
+	}
+	
+	.addtab_tc {
+		position: absolute;
+		top: 38px;
+		text-align: center;
+		left: 0px;
+		width: 140px;
+		line-height: 35px;
+		border-radius: 3px;
+		z-index: 99;
+		border: 1px solid #b5bdc9;
+		font-size: 14px;
+		background-color: #ffffff;
+		padding-bottom: 30px;
+	}
+	
+	.addtab_tc:hover {
+		background-color: #d4d4d4;
+		color: #000;
+		border: 1px solid #8c8c8c;
+	}
+	
+	.q2 {
+		margin-bottom: 30px;
+	}
+	p {
+		text-align: center;
+		font-size: 24px;
+		margin-bottom: 80px;
+	}
+	
+	.nav_box {
+		display: block;
+		width: 100%;
+		margin: 0px auto;
+		padding: 0px;
+		height: 39px;
+	}
+	
+	.nav_t {
+		float: left;
+	}
+	
+	.nav_t li {
+		display: block;
+		float: left;
+		padding: 0px 10px 0px 0px;
+		height: 40px;
+		line-height: 40px;
+		text-align: center;
+		background-color: #fff;
+		border-radius: 3px 3px 0 0;
+		margin: 0px;
+		margin-left: 8px;
+		position: relative;
+		top: 0px;
+		border: 1px solid #b5bdc9;
+	}
+	
+	.nav_t li.act {
+		background-color: #fff;
+		color: #3e5772;
+		border-bottom: 0px;
+	}
+	
+	.nav_t li a {
+		text-decoration: none;
+		padding: 0px 8px 0px 18px;
+		color: #8a9eb2;
+	}
+	
+	.nav_t li i {
+		margin: 0px 10px 0px 6px;
+		color: #8a9eb2;
+		cursor: pointer;
+	}
+	
+	li.act a {
+		color: #3e5772;
+	}
+	
+	.nav_t li i:hover {
+		color: #3e5772;
+	}
+	
+	.mod_box {
+		width: 100%;
+		margin: 0px auto;
+		background-color: #fff;
+		border: 1px solid #b5bdc9;
+		padding: 30px;
+		line-height: 23px;
+		padding-bottom: 50px;
+	}
+	
+	.mod_all {}
+	
+	.mod {}
+	.pc_r{
+	
+	}
+	.tabletitle td {text-align:left;}
+
+	.tabletitle{margin-left:0px}
+	.pc_r {text-align:left}
+	.table {margin-left:0px}
+	.pc_nav2 .nav_r {}
+	.tdwidth1{width:15%}
+	.tdwidth2{width:23%}
+	.tdwidth3{width:13%}
+	.tdwidth4{width:14%}
+	.tdwidth5{width:10%}
+	.tdwidth6{width:7%}
+	
+</style>
+
+<div class="pc_nav2">
+	<div class="">
+		<div class="nav_l">
+
+			<!--<div class="pc_search"> <input placeholder="输入关键字..." class="pcinput" type="text">
+				<a class="pcbut"><i class="fa fa-search" aria-hidden="true"></i></a>
+			</div>-->
+
+		</div>
+		<div class="nav_r">
+
+			<table width="100%" border="0" cellspacing="0" cellpadding="0" class=" tabletitle" style="">
+				<tbody>
+					<tr>
+						<td class="tdwidth1">文件名称</td>
+						<td class="tdwidth2">POC名称</td>
+						<td class="tdwidth3">产品</td>
+						<td class="tdwidth4"><span style="cursor:pointer" onclick="to_sortBy(this)">发现时间</span><span class="glyphicon"></span></td>
+						<td class="tdwidth5">状态</td>
+						<td class="tdwidth6">操作</td>
+
+					</tr>
+				</tbody>
+			</table>
+
+		</div>
+
+	</div>
+</div>
+
+<div class="pc_main wd_mian" style="padding:0px; margin:0px; height:100%;">
+
+	<div class="" style="height:100%;">
+		<div class=" pc_l">
+			<!--<ul>
+				<li>
+					<a>产品(全部) <i class="fa fa-sort-desc" aria-hidden="true"></i></a>
+				</li>
+			</ul>-->
+			<div class="lbottom">
+				<a class="a_but2 a_but2_act" onclick="getData(10)">本地POC <span id="bendinum">(0)</span></a>
+				<a class="a_but2" onclick="getData(20)">已购买 <span id="buynum">(0)</span></a>
+				<a class="a_but2" onclick="getData(0)">未发布<span id="nopublish">(0)</span></a>
+				<a class="a_but2" onclick="getData(1)">审核中<span id="oncheck">(0)</span></a>
+				<a class="a_but2" onclick="getData(3)">审核通过<span id="fincheck">(0)</span></a>
+				<a class="a_but2" onclick="getData(2)">审核不通过<span id="nocheck">(0)</span></a>
+			</div>
+			<div class="search_div" style="position: absolute;top: 324px;margin-left: 21px;">
+				<div class="d5">
+
+				   <input placeholder="搜索从这里开始..." type="text" id="search_input">
+				   <button type="button" class="poc_search" onclick="poc_search()"></button>
+
+				</div>
+			</div>
+		</div>
+		<div class=" pc_r" id="drop_area">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-striped table-hover ">
+				<tbody id="poc_tbody">
+					<tr>
+						<td style="text-align: center;">
+							
+							<div style="text-align: center; line-height: 25px; color: #acacac;margin-left:10px;margin-top:18%">数据加载中...<div class="loading"><span></span><span></span><span></span><span></span><span></span></div></div>
+						</td>
+					</tr>
+
+				</tbody>
+			</table>
+
+			</div>
+
+		</div>
+	</div>
+
+	<textarea style="display: none;" id="load_quan">
+	
+		 <tr><td style="text-align: center;">
+ 
+  <div style="text-align: center; line-height: 25px; color: #acacac; margin-left:10px;margin-top:18%">数据加载中...<div class="loading"><span></span><span></span><span></span><span></span><span></span></div></div>
+
+    </td></tr>
+</textarea>
+
+	<script type="text/javascript">
+	    from = '';
+		var allPocData = '';
+		var data_state = 0;
+		var pathd = require('path');
+		var select_menu_type = 10;
+		function getData(state) {
+		   select_menu_type = state;
+		   if(state == 10){
+			  //$('.nav_r').css('padding-right','20px');
+		   }else{
+		      //$('.nav_r').css('padding-right','0px');
+		   }
+           $("#poc_tbody").html('');
+			statusstr = "";
+			content_str_time = "";
+			//if(allPocData == ''){
+			//  $("#poc_tbody").html('<tr><td style="text-align:center; color:#ff0000">服务器网络异常!</td></tr>');
+			//  fillingtab(10);
+			//  return;
+			//}
+			if(state == 10) { //本地poc
+				$("#poc_tbody").html($("#load_quan").val());
+				fillingtab(10);
+			} else if(state == 20) { //已购买
+			  $("#poc_tbody").html($("#load_quan").val());
+			  var pathd = require('path');
+			  var root_path =root_path_base;
+
+			  //读取配置文件
+			  var fs = require('fs');
+			  //var config = JSON.parse(fs.readFileSync(root_path+'/config/fofa.json').toString());
+
+			  var fofa_scan = getFofaConfig('fofa_scan');
+			  var path = root_path + fofa_scan + '/store_exploits';
+			  if (!fs.existsSync(path)) {
+				fs.mkdirSync(path);
+			  }
+			  var files = fs.readdirSync(path);
+			  var temp = [];
+			   $("#poc_tbody").html('');
+			   var buyPocsNums = getPocList_Base_store1();
+			   if(buyPocsNums == 0){
+				 $("#poc_tbody").html("<div style='padding-top:20px'>没有数据</div>");
+				 return;
+			   }
+			  files.forEach(function(file) {
+				  if (file == '_blank.rb') {
+					 return;
+				  }
+				  if (file == '.DS_Store') {
+					  return;
+				  }
+				  var extname = pathd.extname(file);
+				  if(extname != '.rb'){
+					return;
+				  }
+				  //var filepath = path + '/' + file;
+				  //var data = fs.readFileSync(filepath, 'utf-8');
+
+				  var ruby_exe = getFofaConfig('ruby_exe');
+				  var ruby_linux = getFofaConfig('ruby_linux');
+				  var ruby_mac = getFofaConfig('ruby_mac');
+
+				  var fofa_scan = getFofaConfig('fofa_scan');
+				  //构造完整poc文件路径
+				  //alert(config.ruby_exe);
+				  var ruby_filepath = root_path + fofa_scan + '/readFile_store.rb';
+				  if (process.platform == 'darwin') {
+					var cmd = ruby_mac+' "' + ruby_filepath + '" ' + file;
+				  }else if(process.platform == 'linux'){
+					var cmd = root_path + ruby_linux+' "' + ruby_filepath + '" ' + file;
+				  }else {
+					var cmd = root_path + ruby_exe + ' "' + ruby_filepath + '" ' + file;
+				  }
+				  var execd = require('child_process').exec;
+				  execd(cmd,function(error,stdout,stderr){
+					if(stdout.length >1){
+					    var item = JSON.parse(stdout);
+					    item.FileName = file;
+						var FileNamearr = item.FileName.split(".");
+						// console.log(FileNamearr);
+						content_str_time =
+							"<tr id='" + FileNamearr[0] + "'>" +
+							"<td class='tdwidth1'><a onClick=to_routePage(\"view-poc.html?from=store&act1=edit&FileName1=" + item.FileName + "\")>" + item.FileName + "</a></td>" +
+							"<td class='tdwidth2'>" + xssfilter(item.Name) + "</td>" +
+							"<td class='tdwidth3'>" + xssfilter(item.Product) + "</td>" +
+							"<td class='tdwidth4'>" + xssfilter(item.DisclosureDate) + "</td>" +
+							"<td class='tdwidth5'>" + "已购买" + "</td>" +
+					//						'<td width="10%" class="pc_cz"><a href="javascript:void(0)" onclick="to_delPoc(\'' + FileNamearr[0] + '\')"><i class="fa fa-trash" ></i></a>' +
+							'<td class="tdwidth6" class="pc_cz"><a href="javascript:void(0)" onClick="to_routePage(\'edit-poc.html?from=store&act1=edit&FileName1='+item.FileName+'\')"><i class="fa fa-edit" ></i></a>'+
+							"</tr>";
+					 
+					  $("#poc_tbody").append(content_str_time);
+					  //console.log('you offer args:',stdout);
+					} else {
+					  //console.log('you don\'t offer args');
+					}
+					if(error) {
+					  //console.info('stderr : '+stderr);
+					}
+				  });
+			  });
+
+			
+
+
+			} else if(state == 1) { //审核中
+				$("#poc_tbody").html($("#load_quan").val());
+				fillingtab(1);
+
+			} else if(state == 2) { //审核不通过
+				$("#poc_tbody").html($("#load_quan").val());
+
+				fillingtab(2);
+			} else if(state == 3) { //审核通过
+				$("#poc_tbody").html($("#load_quan").val());
+				fillingtab(3);
+			} else if(state == 0) { //未发布
+				$("#poc_tbody").html($("#load_quan").val());
+				fillingtab(0);
+			}
+
+		} 
+
+		$(function() {
+			//begin fofa server
+			var UserInfo = GetUserInfo();
+			if(!UserInfo.fofa_server){
+				$('.search_div').css('top','75px');
+				$(".lbottom .a_but2").eq(0).removeClass("a_but2_act");
+				$(".lbottom .a_but2").each(function(index,element){
+					if(index != 0){
+						$(this).css('display','none');
+					}
+				});
+			}
+			//end
+			//$('.pc_r table').css('width',$('.nav_r table').css('width'));
+			$(".lbottom .a_but2").click(function() {
+					$(".lbottom .a_but2").removeClass("a_but2_act");
+					$(this).addClass("a_but2_act");
+				})
+				//getMyAllPocsList();
+				//getAllPocData();//服务端得到已发布poc列表
+			statusstr = "";
+			content_str_time = "";
+			FileNamearr = "";
+			oncheck =0;
+			fincheck =0;
+			nocheck =0;
+			nopublish =0;
+			setTimeout(function() {
+				if(!allPocInfo){
+					loadAllPocBatch();//批量加载所有POC
+				}
+				pocs = allPocInfo.normal; //读取本地poc文件列表
+				fillingtab(10); //0未发布,1审核中,2审核不通过,3审核通过.10全部,
+				$("#bendinum").html('('+pocs.length+')');
+				$("#oncheck").html('('+oncheck+')');
+    			$("#fincheck").html('('+fincheck+')');
+    			$("#nocheck").html('('+nocheck+')');
+				$("#nopublish").html('('+nopublish+')');
+			}, 300);
+			
+			setTimeout(function() {
+			    buypocs =getPocList_Base_store1();
+    			$("#buynum").html('('+parseInt(buypocs)+')');
+			}, 2000);
+
+    		// if (1 == pocs[0].status) {
+    		// 	console.log(11111);
+    		// }
+			//setInterval("getPocList_Base()",10000);
+			//console.log(pocs);
+			
+		});
+
+		function fillingtab(i) {
+			content_str_time = '';
+			oncheck=0;
+			nocheck=0;
+			fincheck=0;
+			nopublish =0;
+			if(i == 10) {
+
+				$.each(pocs, function(key, item) {
+					
+					var FileNamearr = pathd.basename(item.FileName, '.rb');
+					var filename_md5 = mmd5(FileNamearr);
+					if(item.status == 0 || !item.status) {
+						var timediff = dateNowDiff(item.FileCtime);
+						if(timediff > 86400*7*1000){
+							statusstr = '<span title="超过7天未发布" style="color:#F90">未发布</span>';
+						}else{
+							statusstr = "未发布";
+						}
+						nopublish++;
+					}else if(item.status == 1) {
+						oncheck++;						
+						statusstr = "审核中";
+					}else if(item.status == 2) {
+						nocheck++;
+						statusstr = "审核不通过";
+					}else if(item.status == 3) {
+						fincheck++;
+						statusstr = "审核通过";
+					}else{
+						statusstr = "未发布";
+					}
+					//if(item.HasExp && typeof(item.ExpParams) !="undefined" && item.ExpParams.length > 0){
+					if(item.HasExp){
+						var exp_img = '<span class="glyphicon glyphicon-flash" aria-hidden="true"></span>';
+					}else{
+						var exp_img = '';
+					}
+					if(item.status == 1 || item.status == 2 || item.status == 3){
+					  content_str_time +=
+						"<tr id='" + filename_md5 + "'>" +
+						"<td class='tdwidth1'>"+exp_img+"<a onClick=to_routePage(\"view-poc.html?act1=edit&FileName1=" + xssfilter(item.FileName) + "\")>" + xssfilter(item.FileName) + "</a></td>" +
+						"<td class='tdwidth2'>" + xssfilter(item.Name) + "</td>" +
+						"<td class='tdwidth3'>" + xssfilter(item.Product) + "</td>" +
+						"<td class='tdwidth4'>" + xssfilter(item.DisclosureDate) + "</td>" +
+						"<td class='tdwidth5' id='td_state_"+filename_md5+"'>" + statusstr + "</td>" +
+						'<td class="tdwidth6" class="pc_cz"><a href="javascript:void(0)" onClick="to_routePage(\'edit-poc.html?act1=edit&FileName1=' + xssfilter(item.FileName) + '\')"><i class="fa fa-edit" ></i></a>' +
+
+						"</tr>";					
+					
+					}else{
+					  content_str_time +=
+						"<tr id='" + filename_md5 + "'>" +
+						"<td class='tdwidth1'>"+exp_img+"<a onClick=to_routePage(\"view-poc.html?act1=edit&FileName1=" + xssfilter(item.FileName) + "\")>" + xssfilter(item.FileName) + "</a></td>" +
+						"<td class='tdwidth2'>" + xssfilter(item.Name) + "</td>" +
+						"<td class='tdwidth3'>" + xssfilter(item.Product) + "</td>" +
+						"<td class='tdwidth4'>" + xssfilter(item.DisclosureDate) + "</td>" +
+						"<td class='tdwidth5'>" + statusstr + "</td>" +
+						'<td class="tdwidth6" class="pc_cz"><a href="javascript:void(0)" onClick="to_routePage(\'edit-poc.html?act1=edit&FileName1=' + xssfilter(item.FileName) + '\')"><i class="fa fa-edit" ></i></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" onclick="to_delPoc(\'' + FileNamearr + '\',\''+filename_md5+'\')"><i class="fa fa-trash" ></i></a>' +
+
+						"</tr>";
+					}
+
+				});
+
+			}
+			if(i == 0) {
+				$.each(pocs, function(key, item) {
+					if(item.status == 0 || !item.status) {
+						var FileNamearr = pathd.basename(item.FileName, '.rb');
+						var filename_md5 = mmd5(FileNamearr);
+					
+						var timediff = dateNowDiff(item.FileCtime);
+						if(timediff > 86400*7*1000){
+							statusstr = '<span title="超过7天未发布" style="color:#F90">未发布</span>';
+						}else{
+							statusstr = "未发布";
+						}
+						//if(item.HasExp && typeof(item.ExpParams) !="undefined" && item.ExpParams.length > 0){
+						if(item.HasExp){
+							var exp_img = '<span class="glyphicon glyphicon-flash" aria-hidden="true"></span>';
+						}else{
+							var exp_img = '';
+						}
+
+						content_str_time +=
+							"<tr id='" + filename_md5 + "'>" +
+							"<td class='tdwidth1'>"+exp_img+"<a onClick=to_routePage(\"view-poc.html?act1=edit&FileName1=" + xssfilter(item.FileName) + "\")>" + xssfilter(item.FileName) + "</a></td>" +
+							"<td class='tdwidth2'>" + xssfilter(item.Name) + "</td>" +
+							"<td class='tdwidth3'>" + xssfilter(item.Product) + "</td>" +
+							"<td class='tdwidth4'>" + xssfilter(item.DisclosureDate) + "</td>" +
+							"<td class='tdwidth5'>" + statusstr + "</td>" +
+							'<td class="tdwidth6" class="pc_cz"><a href="javascript:void(0)" onClick="to_routePage(\'edit-poc.html?act1=edit&FileName1=' + xssfilter(item.FileName) + '\')"><i class="fa fa-edit" ></i></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" onclick="to_delPoc(\'' + FileNamearr + '\',\''+filename_md5+'\')"><i class="fa fa-trash" ></i></a>' +
+
+							"</tr>";
+					}
+					
+
+				});
+
+			}
+			if(i == 1) {
+
+				$.each(pocs, function(key, item) {
+
+					var FileNamearr = pathd.basename(item.FileName, '.rb');
+					var filename_md5 = mmd5(FileNamearr);
+					if(item.status == 1) {
+						statusstr = "审核中";
+						content_str_time +=
+							"<tr id='" + filename_md5 + "'>" +
+							"<td class='tdwidth1'><a onClick=to_routePage(\"view-poc.html?act1=edit&FileName1=" + xssfilter(item.FileName) + "\")>" + xssfilter(item.FileName) + "</a></td>" +
+							"<td class='tdwidth2'>" + xssfilter(item.Name) + "</td>" +
+							"<td class='tdwidth3'>" + xssfilter(item.Product) + "</td>" +
+							"<td class='tdwidth4'>" + xssfilter(item.DisclosureDate) + "</td>" +
+							"<td class='tdwidth5'>" + statusstr + "</td>" +
+							'<td class="tdwidth6" class="pc_cz"><a href="javascript:void(0)" onClick="to_routePage(\'edit-poc.html?act1=edit&FileName1=' + xssfilter(item.FileName) + '\')"><i class="fa fa-edit" ></i></a>' +
+
+							"</tr>";
+
+					}
+
+				});
+
+			}
+
+			if(i == 2) {
+
+				$.each(pocs, function(key, item) {
+
+					var FileNamearr = pathd.basename(item.FileName, '.rb');
+					var filename_md5 = mmd5(FileNamearr);
+					if(item.status == 2) {
+						statusstr = "审核不通过";
+						content_str_time +=
+							"<tr id='" + filename_md5+ "'>" +
+							"<td class='tdwidth1'><a onClick=to_routePage(\"view-poc.html?act1=edit&FileName1=" + xssfilter(item.FileName) + "\")>" + xssfilter(item.FileName) + "</a></td>" +
+							"<td class='tdwidth2'>" + xssfilter(item.Name) + "</td>" +
+							"<td class='tdwidth3'>" + xssfilter(item.Product) + "</td>" +
+							"<td class='tdwidth4'>" + xssfilter(item.DisclosureDate) + "</td>" +
+							"<td class='tdwidth5'>" + statusstr + "</td>" +
+							'<td class="tdwidth6" class="pc_cz"><a href="javascript:void(0)" onClick="to_routePage(\'edit-poc.html?act1=edit&FileName1=' + xssfilter(item.FileName) + '\')"><i class="fa fa-edit" ></i></a>' +
+
+							"</tr>";
+
+					}
+
+				});
+
+			}
+
+			if(i == 3) {
+
+				$.each(pocs, function(key, item) {
+					var FileNamearr = pathd.basename(item.FileName, '.rb');
+					var filename_md5 = mmd5(FileNamearr);
+					if(item.status == 3) {
+						statusstr = "审核通过";
+						content_str_time +=
+							"<tr id='" + filename_md5 + "'>" +
+							"<td class='tdwidth1'><a onClick=to_routePage(\"view-poc.html?act1=edit&FileName1=" + xssfilter(item.FileName) + "\")>" + xssfilter(item.FileName) + "</a></td>" +
+							"<td class='tdwidth2'>" + xssfilter(item.Name) + "</td>" +
+							"<td class='tdwidth3'>" + xssfilter(item.Product) + "</td>" +
+							"<td class='tdwidth4'>" + xssfilter(item.DisclosureDate) + "</td>" +
+							"<td class='tdwidth5'>" + statusstr + "</td>" +
+							'<td class="tdwidth6" class="pc_cz"><a href="javascript:void(0)" onClick="to_routePage(\'edit-poc.html?act1=edit&FileName1=' + xssfilter(item.FileName) + '\')"><i class="fa fa-edit" ></i></a>' +
+
+							"</tr>";
+
+					}
+
+				});
+
+			}
+			if(content_str_time == "") {
+				$("#poc_tbody").html("<div style='padding-top:20px'>没有数据</div>");
+
+			} else {
+				setTimeout(function() {
+
+					$("#poc_tbody").html(content_str_time);
+				}, 1)
+
+			}
+
+		}
+
+		function to_delPoc(FileName,filename_md5) {
+			if(confirm('你确认要删除此数据吗？')) {
+				delPoc(FileName + ".rb");
+				$('#' + filename_md5).remove();
+				loadAllPocBatch(1);
+				pocs = allPocInfo.normal;
+				$("#bendinum").html('('+pocs.length+')');
+			}
+			return false;
+		}
+
+		function to_EditPoc(Pid, FileName) {
+			window.location.href = 'edit-poc.html?act=edit&FileName=' + FileName + '&Pid=' + Pid;
+		}
+		function getPocList_Base_store1() {
+		  var pathd = require('path');
+		  var root_path =root_path_base;
+		  var fs = require('fs');
+		  var fofa_scan = getFofaConfig('fofa_scan');
+		  var path = root_path + fofa_scan + '/store_exploits';
+		  var files = fs.readdirSync(path);
+		  var buynum = 0;
+		  $.each(files, function(key, item) {
+				  if (item == '_blank.rb') {
+					 return;
+				  }
+				  if (item == '.DS_Store') {
+					 return;
+				  }
+				  var extname = pathd.extname(item);
+				  if(extname != '.rb'){
+					return;
+				  }
+				  buynum++;
+		  
+		  });
+		  return buynum;
+		};
+		function poc_search(){
+			
+			$(".lbottom .a_but2").removeClass("a_but2_act");
+			$(".lbottom .a_but2").eq(0).addClass("a_but2_act");
+			
+			var search_input = $.trim($('#search_input').val());
+			if(search_input.length > 0 && search_input.length < 2){
+				return;
+			}
+			if(search_input == ".rb"){
+				return;
+			}
+			if(search_input.length > 100){
+				return;
+			}
+
+			$("#poc_tbody").html($("#load_quan").val());
+			setTimeout(function() {
+			if(search_input.length == 0){
+				loadAllPocBatch();//批量加载所有POC
+				pocs = allPocInfo.normal; //读取本地poc文件列表
+				
+				fillingtab(10); //0未发布,1审核中,2审核不通过,3审核通过.10全部,
+				$("#bendinum").html('('+pocs.length+')');
+				$("#oncheck").html('('+oncheck+')');
+    			$("#fincheck").html('('+fincheck+')');
+    			$("#nocheck").html('('+nocheck+')');
+				$("#nopublish").html('('+nopublish+')');
+			}else{
+				pocs = allPocInfo.normal;
+				content_str_time = '';
+				$.each(pocs, function(key, item) {
+					var FileName = item.FileName.toLowerCase();
+					var Product =  item.Product.toLowerCase();
+					var Name = item.Name.toLowerCase();
+					search_input = search_input.toLowerCase();
+					if(FileName.indexOf(search_input) != -1 || Product.indexOf(search_input) != -1 || Name.indexOf(search_input) != -1){
+						var FileNamearr = pathd.basename(item.FileName, '.rb');
+						var filename_md5 = mmd5(FileNamearr);
+						if(item.status == 0) {
+							statusstr = "未发布";
+						}else if(item.status == 1) {
+										
+							statusstr = "审核中";
+						}else if(item.status == 2) {
+							
+							statusstr = "审核不通过";
+						}else if(item.status == 3) {
+							
+							statusstr = "审核通过";
+						}else{
+							statusstr = "未发布";
+						}
+
+						content_str_time +=
+							"<tr id='" + filename_md5 + "'>" +
+							"<td class='tdwidth1'><a onClick=to_routePage(\"view-poc.html?act1=edit&FileName1=" + xssfilter(item.FileName) + "\")>" + xssfilter(item.FileName) + "</a></td>" +
+							"<td class='tdwidth2'>" + xssfilter(item.Name) + "</td>" +
+							"<td class='tdwidth3'>" + xssfilter(item.Product) + "</td>" +
+							"<td class='tdwidth4'>" + xssfilter(item.DisclosureDate) + "</td>" +
+							"<td class='tdwidth5'>" + statusstr + "</td>" +
+							'<td class="tdwidth6" class="pc_cz"><a href="javascript:void(0)" onClick="to_routePage(\'edit-poc.html?act1=edit&FileName1=' + xssfilter(item.FileName) + '\')"><i class="fa fa-edit" ></i></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" onclick="to_delPoc(\'' + FileNamearr + '\',\''+filename_md5+'\')"><i class="fa fa-trash" ></i></a>' +
+
+							"</tr>";
+					}
+				});
+				if(content_str_time == "") {
+					$("#poc_tbody").html("<div style='padding-top:20px'>没有数据</div>");
+
+				} else {
+					
+
+						$("#poc_tbody").html(content_str_time);
+			
+
+				}
+			
+			}
+		},1);
+
+		}
+	</script>
+<script language='javascript'>
+document.onkeydown=function(){
+   if (event.keyCode == 13){
+      poc_search();
+   }
+
+};
+</script>
+<!-- BEGIN 拖拽POC -->
+<script type="text/javascript">
+$(function(){
+	//阻止浏览器默认行。
+	$(document).on({
+		dragleave:function(e){		//拖离
+			e.preventDefault();
+		},
+		drop:function(e){			//拖后放
+			e.preventDefault();
+		},
+		dragenter:function(e){		//拖进
+			e.preventDefault();
+		},
+		dragover:function(e){		//拖来拖去
+			e.preventDefault();
+		}
+	});
+	var box = document.getElementById('drop_area');
+		
+	box.addEventListener("drop",function(e){
+		try {
+			$("#fullbg_ruby").show();
+			$("#dialog_start").show();
+			
+			e.preventDefault(); //取消默认浏览器拖拽效果
+			
+			var fileList = e.dataTransfer.files; //获取文件对象
+			//检测是否是拖拽文件到页面的操作
+			if(fileList.length == 0){
+				return false;
+			}
+
+			var fs = require('fs');		
+
+			var fofa_scan = getFofaConfig('fofa_scan');
+			var path = root_path_base + fofa_scan + '/exploits/';
+			var first_file_name = '';
+			$.each(fileList,function(key,item){
+				//检测文件是不是ruby
+				if(item.name.indexOf('.rb') != -1){
+					if(first_file_name == ''){
+						first_file_name = item.name;
+					}
+					if(!ChackclientName(item.name)){
+						alert('文件'+item.name+'名称格式不对，POC文件名只允许包含字母、数字、下划线');
+					}else{
+						//fs.createReadStream(item.path).pipe(fs.createWriteStream(path+item.name));
+						var source = fs.readFileSync(item.path);
+						fs.writeFileSync(path+item.name, source);
+					}
+				}
+			});
+			
+			if(first_file_name.length > 0){
+				loadAllPocBatch(1);	
+				/*
+				pocs = allPocInfo.normal;
+				getData(10);
+				*/
+				to_routePage('edit-poc.html?act1=edit&FileName1='+first_file_name);
+			}
+			$("#fullbg_ruby").hide();
+			$("#dialog_start").hide();
+		
+
+		} catch (ex) {
+			alert(ex.message);
+		}
+	},false);
+});
+<!-- END 拖拽POC -->
+
+function to_sortBy(obj){
+  if(select_menu_type == 20){
+	return;
+  }
+  $("#poc_tbody").html('');
+  $("#poc_tbody").html($("#load_quan").val());
+  setTimeout(function() {
+		
+	var arr2 = [];
+	var content_str_time = ''
+	
+	if(select_menu_type == 10){
+		for(var i=0;i<pocs.length;i++){
+			arr2.push(pocs[i]);
+		}	
+	}else if(select_menu_type == 1){
+		for(var i=0;i<pocs.length;i++){
+			if(pocs[i].status == 1) {
+				arr2.push(pocs[i]);
+			}
+		}
+	}else if(select_menu_type == 3){
+		for(var i=0;i<pocs.length;i++){
+			if(pocs[i].status == 3) {
+				arr2.push(pocs[i]);
+			}
+		}
+
+	}else if(select_menu_type == 2){
+		for(var i=0;i<pocs.length;i++){
+			if(pocs[i].status == 2) {
+				arr2.push(pocs[i]);
+			}
+		}	
+	
+	}
+	if($(obj).next('span').hasClass('glyphicon-arrow-up')){
+		$(obj).next('span').addClass('glyphicon-arrow-down');
+		arr2.sort(sortby_d).reverse();
+		$(obj).next('span').removeClass('glyphicon-arrow-up');
+	}else if($(obj).next('span').hasClass('glyphicon-arrow-down')){
+		$(obj).next('span').addClass('glyphicon-arrow-up');
+		$(obj).next('span').removeClass('glyphicon-arrow-down');
+		arr2.sort(sortby_d);
+	}else{
+		$(obj).next('span').addClass('glyphicon-arrow-down');
+		arr2.sort(sortby_d).reverse();
+	}
+	$.each(arr2, function(key, item) {
+		
+		var FileNamearr = pathd.basename(item.FileName, '.rb');
+		var filename_md5 = mmd5(FileNamearr);
+		if(item.status == 0) {
+			var timediff = dateNowDiff(item.FileCtime);
+			if(timediff > 86400*7*1000){
+				statusstr = '<span title="超过7天未发布" style="color:#F90">未发布</span>';
+			}else{
+				statusstr = "未发布";
+			}
+		}else if(item.status == 1) {			
+			statusstr = "审核中";
+		}else if(item.status == 2) {
+			
+			statusstr = "审核不通过";
+		}else if(item.status == 3) {
+			
+			statusstr = "审核通过";
+		}else{
+			statusstr = "未发布";
+		}
+		//if(item.HasExp && typeof(item.ExpParams) !="undefined" && item.ExpParams.length > 0){
+		if(item.HasExp){
+			var exp_img = '<span class="glyphicon glyphicon-flash" aria-hidden="true"></span>';
+		}else{
+			var exp_img = '';
+		}
+		if(item.status == 1 || item.status == 2 || item.status == 3){
+		  content_str_time +=
+			"<tr id='" + filename_md5 + "'>" +
+			"<td class='tdwidth1'>"+exp_img+"<a onClick=to_routePage(\"view-poc.html?act1=edit&FileName1=" + xssfilter(item.FileName) + "\")>" + xssfilter(item.FileName) + "</a></td>" +
+			"<td class='tdwidth2'>" + xssfilter(item.Name) + "</td>" +
+			"<td class='tdwidth3'>" + xssfilter(item.Product) + "</td>" +
+			"<td class='tdwidth4'>" + xssfilter(item.DisclosureDate) + "</td>" +
+			"<td class='tdwidth5' id='td_state_"+filename_md5+"'>" + statusstr + "</td>" +
+			'<td class="tdwidth6" class="pc_cz"><a href="javascript:void(0)" onClick="to_routePage(\'edit-poc.html?act1=edit&FileName1=' + xssfilter(item.FileName) + '\')"><i class="fa fa-edit" ></i></a>' +
+
+			"</tr>";					
+		
+		}else{
+		  content_str_time +=
+			"<tr id='" + filename_md5 + "'>" +
+			"<td class='tdwidth1'>"+exp_img+"<a onClick=to_routePage(\"view-poc.html?act1=edit&FileName1=" + xssfilter(item.FileName) + "\")>" + xssfilter(item.FileName) + "</a></td>" +
+			"<td class='tdwidth2'>" + xssfilter(item.Name) + "</td>" +
+			"<td class='tdwidth3'>" + xssfilter(item.Product) + "</td>" +
+			"<td class='tdwidth4'>" + xssfilter(item.DisclosureDate) + "</td>" +
+			"<td class='tdwidth5'>" + statusstr + "</td>" +
+			'<td class="tdwidth6" class="pc_cz"><a href="javascript:void(0)" onClick="to_routePage(\'edit-poc.html?act1=edit&FileName1=' + xssfilter(item.FileName) + '\')"><i class="fa fa-edit" ></i></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" onclick="to_delPoc(\'' + FileNamearr + '\',\''+filename_md5+'\')"><i class="fa fa-trash" ></i></a>' +
+
+			"</tr>";
+		}
+
+	});
+	if(content_str_time == "") {
+		$("#poc_tbody").html("<div style='padding-top:20px'>没有数据</div>");
+
+	} else {
+		setTimeout(function() {
+			$("#poc_tbody").html(content_str_time);
+		}, 1);
+		
+	}
+  }, 1);
+}
+function sortby_d(a, b) {
+  var t1 = Date.parse(a.DisclosureDate);
+  t1 = t1 / 1000;
+  var t2 = Date.parse(b.DisclosureDate);
+  t2 = t2 / 1000;
+  return t1 - t2;
+}
+</script>
